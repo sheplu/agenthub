@@ -180,8 +180,5 @@ vite.config.ts.timestamp-*
 .aider.chat.history.md
 .aider.tags.cache.v3/
 
-# Terminal session recordings (asciinema)
-*.cast
-
 # Note: AGENTS.md, CLAUDE.md, .cursor/rules, and similar instruction files
 # are intentionally NOT ignored so they can be committed and shared with the team.
