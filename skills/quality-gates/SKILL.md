@@ -16,20 +16,17 @@ creation** of them for a repo that has none.
   concurrency `cancel-in-progress: true`, baseline
   `permissions: contents: read`): `quality-gates.yaml` (`Quality Gates`),
   `sast.yaml` (`SAST`), `dependency-scan.yaml` (`Dependency Scan`).
-- Kebab-case job IDs, tiered display names: quality-gates runs `lint`,
-  `typecheck`, `build`, five test tiers (`test-unit|integration|smoke|fuzz|e2e`),
-  `coverage-report`, `docs`; sast runs `semgrep`; dependency-scan runs
-  `osv-scan` and `audit`.
-- Runners: `ubuntu-24.04-arm` for all jobs; Semgrep on `ubuntu-24.04` is the
-  only exception.
+- A fixed catalog of gate jobs with kebab-case IDs and a single runner rule —
+  the exact jobs, display names, and runners live in conventions.md; never
+  guess them from this summary.
 - Pinned runtime, reproducible lockfile installs with dependency caching,
   minimal supply chain; property-based tests fold into the fuzz tier. Concrete
   toolchains are per-runtime references (Node.js is the default runtime).
 - Actions pinned by commit SHA (+ version comment); external binaries pinned by
   version + SHA256 checksum.
-- Per-tier `coverage-<tier>` lcov artifacts, merged into a sticky PR comment
-  (`<!-- <repo>-coverage-report -->`); coverage thresholds and a max package
-  size must be configured (numbers are per-repo decisions).
+- Per-tier coverage artifacts merged into a sticky PR comment; coverage
+  thresholds and a max package size must be configured (numbers are per-repo
+  decisions).
 - **CI is always green** — no red-by-design jobs, no `continue-on-error`
   masking (the sticky-comment step is the one sanctioned use).
 

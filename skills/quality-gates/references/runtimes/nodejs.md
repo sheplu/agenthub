@@ -12,8 +12,9 @@ Read this only when the target repo is Node.js; the generic rules live in
 
 ## Toolchain
 
-- **TypeScript 7** run natively (Node type-stripping) — no build step needed to
-  execute `.ts` sources; `typecheck` is `tsc --noEmit`.
+- **TypeScript 7** (native Go compiler) — `typecheck` is `tsc --noEmit`.
+- Node's native type-stripping executes `.ts` sources directly — no build
+  step needed to run tests or the CLI.
 - **oxlint** for `lint`.
 - **`node:test`** native runner for all test tiers — no test-framework
   dependency.

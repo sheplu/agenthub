@@ -36,7 +36,9 @@ permissions:
   contents: read
 ```
 
-- **Trigger** — `pull_request` targeting `main` only.
+- **Trigger** — `pull_request` targeting `main` only. This presumes branch
+  protection on `main` requires these workflows' checks on every PR; without
+  it, a direct push to `main` is ungated — flag that in a review.
 - **Concurrency** — group by workflow + ref, `cancel-in-progress: true`.
 - **Permissions** — baseline `contents: read` at the workflow level; a job that
   needs more (e.g. `coverage-report` posting a PR comment) elevates its own
@@ -67,6 +69,16 @@ Runner rules:
 - All jobs run on **`ubuntu-24.04-arm`**.
 - **Semgrep runs on `ubuntu-24.04`** (x64) until its arm support is confirmed —
   this is the only sanctioned exception.
+
+Missing jobs:
+
+- The catalog is the default — a repo ships every job unless a tier genuinely
+  has nothing to test (e.g. no API surface → no `docs` job).
+- An omitted job must come with a recorded rationale — one line per job in the
+  PR that introduces the workflows. A missing job with no rationale is a
+  deviation.
+- Never keep a job that only runs an empty placeholder script to satisfy the
+  catalog — omit it with rationale instead.
 
 Security jobs — three layers, in two dedicated workflows, all merge-blocking
 PR gates:
