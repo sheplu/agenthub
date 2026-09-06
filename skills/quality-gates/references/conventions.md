@@ -87,12 +87,12 @@ Generic requirements, whatever the stack:
   security jobs must scan and the pinning rules must cover.
 
 The concrete tool choices (linter, type checker, test runner, docs generator,
-install command) are stack-specific and live in per-stack references — read the
-one matching the target repo:
+install command) are runtime-specific and live in per-runtime references under
+`references/runtimes/` — read the one matching the target repo:
 
-- **Node** (the default stack): [node.md](node.md)
-- Other stacks: no reference yet — derive the equivalent mapping from the job
-  catalog and propose adding a `references/<stack>.md`.
+- **Node.js** (the default runtime): [runtimes/nodejs.md](runtimes/nodejs.md)
+- Other runtimes: no reference yet — derive the equivalent mapping from the job
+  catalog and propose adding a `references/runtimes/<runtime>.md`.
 
 ## Pinning rules
 

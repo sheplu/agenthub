@@ -1,8 +1,8 @@
-# Quality Gates — Node setup
+# Quality Gates — Node.js setup
 
-Stack-specific conventions for Node repositories (the default stack). Read this
-only when the target repo is Node; the generic rules live in
-[conventions.md](conventions.md).
+Runtime-specific conventions for Node.js repositories (the default runtime).
+Read this only when the target repo is Node.js; the generic rules live in
+[conventions.md](../conventions.md).
 
 ## Runtime & install
 
