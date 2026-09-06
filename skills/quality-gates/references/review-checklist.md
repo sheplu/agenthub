@@ -11,10 +11,14 @@ them). Read
    gate workflow, or any gate job living in the wrong file).
 2. Check the **workflow shape** of each file: exact workflow name,
    `pull_request` → `main` trigger, concurrency with
-   `cancel-in-progress: true`, baseline `permissions: contents: read`.
+   `cancel-in-progress: true`, baseline `permissions: contents: read`. The
+   PR-only trigger presumes branch protection: confirm `main` requires these
+   checks (e.g. `gh api repos/<owner>/<repo>/branches/main/protection`); if
+   you cannot verify it, report the assumption explicitly.
 3. Check **jobs** against the catalog: kebab-case IDs, exact display names,
    correct workflow file and runner per job (arm everywhere except Semgrep),
-   no unexplained missing or extra jobs.
+   no unexplained missing or extra jobs (omissions need a recorded rationale —
+   see "Missing jobs" in conventions.md).
 4. Check **every `uses:`** is SHA-pinned with a version comment.
 5. Check **every external binary download** is version- and checksum-pinned.
 6. Check **runtime setup** against the matching runtime reference (e.g.
