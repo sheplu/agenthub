@@ -6,8 +6,8 @@ Read this only when the target repo is Node.js; the generic rules live in
 
 ## Runtime & install
 
-- **Node 24** via `actions/setup-node` with `node-version: 24` and
-  `cache: npm`.
+- **Node 26** (current LTS) via `actions/setup-node` with `node-version: 26`
+  and `cache: npm`.
 - Install with `npm ci --prefer-offline` — never `npm install` in CI.
 
 ## Toolchain

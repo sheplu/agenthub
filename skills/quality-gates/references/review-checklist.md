@@ -15,8 +15,9 @@ Step-by-step procedure for reviewing a workflow (or a PR touching one). Read
    missing or extra jobs.
 4. Check **every `uses:`** is SHA-pinned with a version comment.
 5. Check **every external binary download** is version- and checksum-pinned.
-6. Check **Node setup**: `node-version: 24`, `cache: npm`,
-   `npm ci --prefer-offline`.
+6. Check **runtime setup** against the matching runtime reference (e.g.
+   [runtimes/nodejs.md](runtimes/nodejs.md)): pinned runtime version,
+   dependency cache enabled, reproducible lockfile install.
 7. Check **coverage**: per-tier `coverage-<tier>` artifacts, merge job with
    correct `needs`/`if`, sticky comment with marker, thresholds configured.
 8. Check **build**: pack dry-run present, max package size enforced.
