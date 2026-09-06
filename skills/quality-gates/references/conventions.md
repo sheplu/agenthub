@@ -1,14 +1,27 @@
 # Quality Gates — Conventions
 
-The full specification a `quality-gates.yaml` must follow. This is the file to
-read (entirely) before reviewing or creating a workflow.
+The full specification the CI gate workflows must follow. This is the file to
+read (entirely) before reviewing or creating them.
+
+## Workflow files
+
+CI gates are split across exactly three workflow files, by role:
+
+| File                                     | Workflow name     | Jobs                                                        |
+| ---------------------------------------- | ----------------- | ----------------------------------------------------------- |
+| `.github/workflows/quality-gates.yaml`   | `Quality Gates`   | `lint`, `typecheck`, `build`, `test-*`, `coverage-report`, `docs` |
+| `.github/workflows/sast.yaml`            | `SAST`            | `semgrep`                                                   |
+| `.github/workflows/dependency-scan.yaml` | `Dependency Scan` | `osv-scan`, `audit`                                         |
+
+A gate job outside its designated file, or any additional gate workflow file,
+is a deviation.
 
 ## Canonical workflow shape
 
-One file: `.github/workflows/quality-gates.yaml`.
+Every one of the three files shares the same shape:
 
 ```yaml
-name: Quality Gates
+name: <workflow name from the table above>
 
 on:
   pull_request:
@@ -23,7 +36,6 @@ permissions:
   contents: read
 ```
 
-- **Single workflow** — do not split gates across multiple workflow files.
 - **Trigger** — `pull_request` targeting `main` only.
 - **Concurrency** — group by workflow + ref, `cancel-in-progress: true`.
 - **Permissions** — baseline `contents: read` at the workflow level; a job that
@@ -34,21 +46,21 @@ permissions:
 
 Job IDs are kebab-case verbs; display names are grouped by tier/role.
 
-| Job ID             | Display name         | Runner             | Purpose                                             |
-| ------------------ | -------------------- | ------------------ | --------------------------------------------------- |
-| `osv-scan`         | `OSV Scan`           | `ubuntu-24.04-arm` | Known-vulnerability scan of lockfile (osv-scanner)  |
-| `semgrep`          | `Semgrep`            | `ubuntu-24.04`     | Static analysis: `semgrep scan --config auto --error` |
-| `audit`            | `Audit`              | `ubuntu-24.04-arm` | Ecosystem-native dependency audit (`npm audit`, `cargo audit`, `pip-audit`, …) |
-| `lint`             | `Lint`               | `ubuntu-24.04-arm` | Linter                                              |
-| `typecheck`        | `Typecheck`          | `ubuntu-24.04-arm` | Static type checking                                |
-| `build`            | `Build & Package`    | `ubuntu-24.04-arm` | Build + package dry-run + package size check        |
-| `test-unit`        | `Test (Unit)`        | `ubuntu-24.04-arm` | Unit tier, with coverage                            |
-| `test-integration` | `Test (Integration)` | `ubuntu-24.04-arm` | Integration tier, with coverage                     |
-| `test-smoke`       | `Test (Smoke)`       | `ubuntu-24.04-arm` | Smoke tier ("does it even start"), with coverage    |
-| `test-fuzz`        | `Test (Fuzz)`        | `ubuntu-24.04-arm` | Fuzz + property-based tier, with coverage           |
-| `test-e2e`         | `Test (E2E)`         | `ubuntu-24.04-arm` | End-to-end tier, with coverage                      |
-| `coverage-report`  | `Coverage Report`    | `ubuntu-24.04-arm` | Merge tier coverage, post sticky PR comment         |
-| `docs`             | `Docs`               | `ubuntu-24.04-arm` | Build API docs                                      |
+| Job ID             | Display name         | Workflow          | Runner             | Purpose                                             |
+| ------------------ | -------------------- | ----------------- | ------------------ | --------------------------------------------------- |
+| `semgrep`          | `Semgrep`            | `sast`            | `ubuntu-24.04`     | Static analysis: `semgrep scan --config auto --error` |
+| `osv-scan`         | `OSV Scan`           | `dependency-scan` | `ubuntu-24.04-arm` | Known-vulnerability scan of lockfile (osv-scanner)  |
+| `audit`            | `Audit`              | `dependency-scan` | `ubuntu-24.04-arm` | Ecosystem-native dependency audit (`npm audit`, `cargo audit`, `pip-audit`, …) |
+| `lint`             | `Lint`               | `quality-gates`   | `ubuntu-24.04-arm` | Linter                                              |
+| `typecheck`        | `Typecheck`          | `quality-gates`   | `ubuntu-24.04-arm` | Static type checking                                |
+| `build`            | `Build & Package`    | `quality-gates`   | `ubuntu-24.04-arm` | Build + package dry-run + package size check        |
+| `test-unit`        | `Test (Unit)`        | `quality-gates`   | `ubuntu-24.04-arm` | Unit tier, with coverage                            |
+| `test-integration` | `Test (Integration)` | `quality-gates`   | `ubuntu-24.04-arm` | Integration tier, with coverage                     |
+| `test-smoke`       | `Test (Smoke)`       | `quality-gates`   | `ubuntu-24.04-arm` | Smoke tier ("does it even start"), with coverage    |
+| `test-fuzz`        | `Test (Fuzz)`        | `quality-gates`   | `ubuntu-24.04-arm` | Fuzz + property-based tier, with coverage           |
+| `test-e2e`         | `Test (E2E)`         | `quality-gates`   | `ubuntu-24.04-arm` | End-to-end tier, with coverage                      |
+| `coverage-report`  | `Coverage Report`    | `quality-gates`   | `ubuntu-24.04-arm` | Merge tier coverage, post sticky PR comment         |
+| `docs`             | `Docs`               | `quality-gates`   | `ubuntu-24.04-arm` | Build API docs                                      |
 
 Runner rules:
 
@@ -56,19 +68,22 @@ Runner rules:
 - **Semgrep runs on `ubuntu-24.04`** (x64) until its arm support is confirmed —
   this is the only sanctioned exception.
 
-Security jobs — three layers, all in this same workflow because all three are
-merge-blocking PR gates:
+Security jobs — three layers, in two dedicated workflows, all merge-blocking
+PR gates:
 
-- `osv-scan` — dependency lockfile vs the OSV database (cross-ecosystem, same
-  tool regardless of stack).
-- `audit` — dependency lockfile vs the ecosystem's native advisory database
-  (`npm audit` for Node, `cargo audit` for Rust, `pip-audit` for Python).
-  Overlaps osv-scan on purpose: different databases, cheap defense in depth.
-- `semgrep` — SAST on the repo's own source code, independent of dependencies.
+- `semgrep` (`sast.yaml`) — SAST on the repo's own source code, independent of
+  dependencies.
+- `osv-scan` (`dependency-scan.yaml`) — dependency lockfile vs the OSV database
+  (cross-ecosystem, same tool regardless of stack).
+- `audit` (`dependency-scan.yaml`) — dependency lockfile vs the ecosystem's
+  native advisory database (`npm audit` for Node, `cargo audit` for Rust,
+  `pip-audit` for Python). Overlaps osv-scan on purpose: different databases,
+  cheap defense in depth.
 
-PR-triggered scans only catch vulnerabilities known at merge time; a scheduled
-scan of the default branch (for CVEs disclosed after merge) is a complementary
-*separate* workflow, not part of quality-gates.
+PR-triggered scans only catch vulnerabilities known at merge time. The
+dedicated files make the complement natural: `sast.yaml` and
+`dependency-scan.yaml` can later gain a `schedule:` trigger to scan the default
+branch for CVEs disclosed after merge, without waking the quality-gates jobs.
 
 Suggested additional gate — **commit-schema validation**: a `validate-commits`
 job (display name `Validate Commits`) that checks PR commits follow the

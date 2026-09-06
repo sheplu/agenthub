@@ -1,18 +1,20 @@
 # Quality Gates — Review checklist
 
-Step-by-step procedure for reviewing a workflow (or a PR touching one). Read
+Step-by-step procedure for reviewing the gate workflows (or a PR touching
+them). Read
 [conventions.md](conventions.md) first — every step below checks against it.
 
 ## Procedure
 
-1. Read `.github/workflows/quality-gates.yaml` (flag if the file is missing,
-   misnamed, or if gates are split across several workflow files).
-2. Check the **workflow shape**: name `Quality Gates`, `pull_request` → `main`
-   trigger, concurrency with `cancel-in-progress: true`, baseline
-   `permissions: contents: read`.
+1. Read the three workflow files — `quality-gates.yaml`, `sast.yaml`,
+   `dependency-scan.yaml` (flag any that is missing or misnamed, any extra
+   gate workflow, or any gate job living in the wrong file).
+2. Check the **workflow shape** of each file: exact workflow name,
+   `pull_request` → `main` trigger, concurrency with
+   `cancel-in-progress: true`, baseline `permissions: contents: read`.
 3. Check **jobs** against the catalog: kebab-case IDs, exact display names,
-   correct runner per job (arm everywhere except Semgrep), no unexplained
-   missing or extra jobs.
+   correct workflow file and runner per job (arm everywhere except Semgrep),
+   no unexplained missing or extra jobs.
 4. Check **every `uses:`** is SHA-pinned with a version comment.
 5. Check **every external binary download** is version- and checksum-pinned.
 6. Check **runtime setup** against the matching runtime reference (e.g.
