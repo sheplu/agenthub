@@ -38,7 +38,7 @@ Job IDs are kebab-case verbs; display names are grouped by tier/role.
 | ------------------ | -------------------- | ------------------ | --------------------------------------------------- |
 | `osv-scan`         | `OSV Scan`           | `ubuntu-24.04-arm` | Known-vulnerability scan of lockfile (osv-scanner)  |
 | `semgrep`          | `Semgrep`            | `ubuntu-24.04`     | Static analysis: `semgrep scan --config auto --error` |
-| `audit`            | `Audit`              | `ubuntu-24.04-arm` | `npm audit` on installed dependencies               |
+| `audit`            | `Audit`              | `ubuntu-24.04-arm` | Ecosystem-native dependency audit (`npm audit`, `cargo audit`, `pip-audit`, …) |
 | `lint`             | `Lint`               | `ubuntu-24.04-arm` | Linter (`npm run lint`)                             |
 | `typecheck`        | `Typecheck`          | `ubuntu-24.04-arm` | `tsc --noEmit` (`npm run typecheck`)                |
 | `build`            | `Build & Package`    | `ubuntu-24.04-arm` | Build + `npm pack` dry-run + package size check     |
@@ -55,6 +55,20 @@ Runner rules:
 - Node jobs run on **`ubuntu-24.04-arm`**.
 - **Semgrep runs on `ubuntu-24.04`** (x64) until its arm support is confirmed —
   this is the only sanctioned exception.
+
+Security jobs — three layers, all in this same workflow because all three are
+merge-blocking PR gates:
+
+- `osv-scan` — dependency lockfile vs the OSV database (cross-ecosystem, same
+  tool regardless of stack).
+- `audit` — dependency lockfile vs the ecosystem's native advisory database
+  (`npm audit` for Node, `cargo audit` for Rust, `pip-audit` for Python).
+  Overlaps osv-scan on purpose: different databases, cheap defense in depth.
+- `semgrep` — SAST on the repo's own source code, independent of dependencies.
+
+PR-triggered scans only catch vulnerabilities known at merge time; a scheduled
+scan of the default branch (for CVEs disclosed after merge) is a complementary
+*separate* workflow, not part of quality-gates.
 
 Suggested additional gate — **commit-schema validation**: a `validate-commits`
 job (display name `Validate Commits`) that checks PR commits follow the
