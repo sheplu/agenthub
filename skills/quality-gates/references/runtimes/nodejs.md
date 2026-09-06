@@ -6,8 +6,8 @@ Read this only when the target repo is Node.js; the generic rules live in
 
 ## Runtime & install
 
-- **Node 26** (current LTS) via `actions/setup-node` with `node-version: 26`
-  and `cache: npm`.
+- **Node 26** (enters LTS in October 2026) via `actions/setup-node` with
+  `node-version: 26` and `cache: npm`.
 - Install with `npm ci --prefer-offline` — never `npm install` in CI.
 
 ## Toolchain
@@ -38,7 +38,8 @@ little else.
 
 ## Expected npm scripts
 
-A job must never reference a script that does not exist. The workflow expects:
+A job must never reference a script that does not exist. `quality-gates.yaml`
+expects:
 `lint`, `typecheck`, `build`, `docs:build`, and per-tier `test:<tier>` scripts
 (`test:unit`, `test:integration`, `test:smoke`, `test:fuzz`, `test:e2e`) with
 coverage variants that emit `coverage/<tier>.lcov` for the `coverage-<tier>`

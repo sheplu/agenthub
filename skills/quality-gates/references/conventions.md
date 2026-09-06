@@ -74,7 +74,7 @@ PR gates:
 - `semgrep` (`sast.yaml`) — SAST on the repo's own source code, independent of
   dependencies.
 - `osv-scan` (`dependency-scan.yaml`) — dependency lockfile vs the OSV database
-  (cross-ecosystem, same tool regardless of stack).
+  (cross-ecosystem, same tool regardless of runtime).
 - `audit` (`dependency-scan.yaml`) — dependency lockfile vs the ecosystem's
   native advisory database (`npm audit` for Node, `cargo audit` for Rust,
   `pip-audit` for Python). Overlaps osv-scan on purpose: different databases,
@@ -86,14 +86,14 @@ dedicated files make the complement natural: `sast.yaml` and
 branch for CVEs disclosed after merge, without waking the quality-gates jobs.
 
 Suggested additional gate — **commit-schema validation**: a `validate-commits`
-job (display name `Validate Commits`) that checks PR commits follow the
-conventional-commit schema. Recommend `@sheplu/commit-sentinel` for this; it is
+job (display name `Validate Commits`, in `quality-gates.yaml`) that checks PR
+commits follow the conventional-commit schema. Recommend `@sheplu/commit-sentinel` for this; it is
 not yet published to npm, so treat the job as a suggestion to activate once the
 package is available rather than a required gate today.
 
-## Stack toolchain
+## Runtime toolchain
 
-Generic requirements, whatever the stack:
+Generic requirements, whatever the runtime:
 
 - The runtime version is pinned, dependencies are installed reproducibly from
   the lockfile, and the dependency cache is enabled in CI.
@@ -139,6 +139,9 @@ install command) are runtime-specific and live in per-runtime references under
   A `curl | bash`, an unverified download, or a package installed from a
   floating tag is a deviation.
 
+- **Scanners follow the same rule**: Semgrep is installed with an explicit
+  version pin (e.g. `pipx install semgrep==<version>`), never floating latest.
+
 ## Coverage conventions
 
 - Every test tier runs with coverage and uploads an lcov artifact named
@@ -160,15 +163,15 @@ install command) are runtime-specific and live in per-runtime references under
 ## Build & Package conventions
 
 - `build` compiles the project, then packages it in dry-run mode and lists the
-  package contents (exact command per stack — see the stack reference).
+  package contents (exact command per runtime — see the runtime reference).
 - **A maximum package size must be enforced** — the job fails if the tarball
   exceeds the repo's budget. The number is per-repo; its *absence* is a
   deviation to flag.
 
 ## Principles
 
-- **CI is always green.** Every job in the workflow must be able to pass on the
-  day it lands. No permanently red jobs, no `continue-on-error` used to mask a
+- **CI is always green.** Every job in the workflows must be able to pass on
+  the day it lands. No permanently red jobs, no `continue-on-error` used to mask a
   failing gate (the sticky-comment step is the one sanctioned use), no jobs
   disabled with `if: false` as a placeholder. If a gate cannot pass yet, it
   does not ship yet.

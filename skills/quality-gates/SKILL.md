@@ -39,9 +39,9 @@ Read these on demand — do not guess details from the summary above:
 
 | File | Read when |
 | --- | --- |
-| [references/conventions.md](references/conventions.md) | Always, before any review or creation — the full stack-agnostic spec (workflow files and shape, job catalog, pinning rules, coverage and build conventions, principles). |
+| [references/conventions.md](references/conventions.md) | Always, before any review or creation — the full runtime-agnostic spec (workflow files and shape, job catalog, pinning rules, coverage and build conventions, principles). |
 | [references/runtimes/nodejs.md](references/runtimes/nodejs.md) | The target repo is Node.js — runtime/install setup, toolchain, job-to-tool mapping, expected npm scripts. Skip for other runtimes (each gets its own file under `references/runtimes/`). |
-| [references/review-checklist.md](references/review-checklist.md) | Reviewing an existing workflow or a PR touching one — the 9-step procedure and the deviation-report format. |
+| [references/review-checklist.md](references/review-checklist.md) | Reviewing existing workflows or a PR touching them — the 9-step procedure and the deviation-report format. |
 | [references/creation-guide.md](references/creation-guide.md) | Bootstrapping a repo that has no workflow yet. |
 
 ## How to use

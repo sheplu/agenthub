@@ -19,7 +19,8 @@ them). Read
 5. Check **every external binary download** is version- and checksum-pinned.
 6. Check **runtime setup** against the matching runtime reference (e.g.
    [runtimes/nodejs.md](runtimes/nodejs.md)): pinned runtime version,
-   dependency cache enabled, reproducible lockfile install.
+   dependency cache enabled, reproducible lockfile install, and jobs invoking
+   the runtime's designated tools (job-to-tool mapping).
 7. Check **coverage**: per-tier `coverage-<tier>` artifacts, merge job with
    correct `needs`/`if`, sticky comment with marker, thresholds configured.
 8. Check **build**: pack dry-run present, max package size enforced.
