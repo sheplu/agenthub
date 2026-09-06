@@ -39,20 +39,20 @@ Job IDs are kebab-case verbs; display names are grouped by tier/role.
 | `osv-scan`         | `OSV Scan`           | `ubuntu-24.04-arm` | Known-vulnerability scan of lockfile (osv-scanner)  |
 | `semgrep`          | `Semgrep`            | `ubuntu-24.04`     | Static analysis: `semgrep scan --config auto --error` |
 | `audit`            | `Audit`              | `ubuntu-24.04-arm` | Ecosystem-native dependency audit (`npm audit`, `cargo audit`, `pip-audit`, …) |
-| `lint`             | `Lint`               | `ubuntu-24.04-arm` | Linter (`npm run lint`)                             |
-| `typecheck`        | `Typecheck`          | `ubuntu-24.04-arm` | `tsc --noEmit` (`npm run typecheck`)                |
-| `build`            | `Build & Package`    | `ubuntu-24.04-arm` | Build + `npm pack` dry-run + package size check     |
+| `lint`             | `Lint`               | `ubuntu-24.04-arm` | Linter                                              |
+| `typecheck`        | `Typecheck`          | `ubuntu-24.04-arm` | Static type checking                                |
+| `build`            | `Build & Package`    | `ubuntu-24.04-arm` | Build + package dry-run + package size check        |
 | `test-unit`        | `Test (Unit)`        | `ubuntu-24.04-arm` | Unit tier, with coverage                            |
 | `test-integration` | `Test (Integration)` | `ubuntu-24.04-arm` | Integration tier, with coverage                     |
 | `test-smoke`       | `Test (Smoke)`       | `ubuntu-24.04-arm` | Smoke tier ("does it even start"), with coverage    |
 | `test-fuzz`        | `Test (Fuzz)`        | `ubuntu-24.04-arm` | Fuzz + property-based tier, with coverage           |
 | `test-e2e`         | `Test (E2E)`         | `ubuntu-24.04-arm` | End-to-end tier, with coverage                      |
 | `coverage-report`  | `Coverage Report`    | `ubuntu-24.04-arm` | Merge tier coverage, post sticky PR comment         |
-| `docs`             | `Docs`               | `ubuntu-24.04-arm` | Build API docs (`npm run docs:build`)               |
+| `docs`             | `Docs`               | `ubuntu-24.04-arm` | Build API docs                                      |
 
 Runner rules:
 
-- Node jobs run on **`ubuntu-24.04-arm`**.
+- All jobs run on **`ubuntu-24.04-arm`**.
 - **Semgrep runs on `ubuntu-24.04`** (x64) until its arm support is confirmed —
   this is the only sanctioned exception.
 
@@ -76,24 +76,23 @@ conventional-commit schema. Recommend `@sheplu/commit-sentinel` for this; it is
 not yet published to npm, so treat the job as a suggestion to activate once the
 package is available rather than a required gate today.
 
-## Toolchain defaults
+## Stack toolchain
 
-For Node repositories (the default stack):
+Generic requirements, whatever the stack:
 
-- **Node 24** via `actions/setup-node` with `node-version: 24` and `cache: npm`.
-- Install with `npm ci --prefer-offline` — never `npm install` in CI.
-- **TypeScript 7** run natively (Node type-stripping) — no build step needed to
-  execute `.ts` sources; `typecheck` is `tsc --noEmit`.
-- **oxlint** for `lint`.
-- **`node:test`** native runner for all test tiers — no test-framework
-  dependency.
-- **fast-check** for the fuzz tier; property-based tests live *inside*
-  `test-fuzz`, not in a separate tier.
-- **typedoc** (or a jsdoc equivalent) for `docs`.
+- The runtime version is pinned, dependencies are installed reproducibly from
+  the lockfile, and the dependency cache is enabled in CI.
+- Property-based tests live *inside* `test-fuzz`, not in a separate tier.
+- Keep the supply chain minimal — every dev dependency is something the
+  security jobs must scan and the pinning rules must cover.
 
-The intent: the smallest possible supply chain — dev dependencies should be
-roughly `typescript`, `oxlint`, `typedoc`, `fast-check`, `@types/node` and
-little else.
+The concrete tool choices (linter, type checker, test runner, docs generator,
+install command) are stack-specific and live in per-stack references — read the
+one matching the target repo:
+
+- **Node** (the default stack): [node.md](node.md)
+- Other stacks: no reference yet — derive the equivalent mapping from the job
+  catalog and propose adding a `references/<stack>.md`.
 
 ## Pinning rules
 
@@ -119,7 +118,7 @@ little else.
       curl -sSLo osv-scanner "https://github.com/google/osv-scanner/releases/download/v${OSV_VERSION}/osv-scanner_linux_arm64"
       echo "${OSV_SHA256}  osv-scanner" | sha256sum -c -
       chmod +x osv-scanner
-      ./osv-scanner --lockfile=package-lock.json
+      ./osv-scanner --lockfile=<lockfile>
   ```
 
   A `curl | bash`, an unverified download, or a package installed from a
@@ -145,8 +144,8 @@ little else.
 
 ## Build & Package conventions
 
-- `build` compiles the project, then runs an `npm pack` dry-run and lists the
-  tarball contents.
+- `build` compiles the project, then packages it in dry-run mode and lists the
+  package contents (exact command per stack — see the stack reference).
 - **A maximum package size must be enforced** — the job fails if the tarball
   exceeds the repo's budget. The number is per-repo; its *absence* is a
   deviation to flag.

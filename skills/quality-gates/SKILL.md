@@ -18,11 +18,11 @@ creation** of one for a repo that has none.
 - Kebab-case job IDs, tiered display names; jobs: security trio
   (`osv-scan`, `semgrep`, `audit`), `lint`, `typecheck`, `build`, five test
   tiers (`test-unit|integration|smoke|fuzz|e2e`), `coverage-report`, `docs`.
-- Runners: `ubuntu-24.04-arm` for Node jobs; Semgrep on `ubuntu-24.04` is the
+- Runners: `ubuntu-24.04-arm` for all jobs; Semgrep on `ubuntu-24.04` is the
   only exception.
-- Node 24, `cache: npm`, `npm ci --prefer-offline`; toolchain: TypeScript 7,
-  oxlint, native `node:test`, fast-check (property tests fold into fuzz),
-  typedoc.
+- Pinned runtime, reproducible lockfile installs with dependency caching,
+  minimal supply chain; property-based tests fold into the fuzz tier. Concrete
+  toolchains are per-stack references (Node is the default stack).
 - Actions pinned by commit SHA (+ version comment); external binaries pinned by
   version + SHA256 checksum.
 - Per-tier `coverage-<tier>` lcov artifacts, merged into a sticky PR comment
@@ -37,7 +37,8 @@ Read these on demand — do not guess details from the summary above:
 
 | File | Read when |
 | --- | --- |
-| [references/conventions.md](references/conventions.md) | Always, before any review or creation — the full spec (workflow shape, job catalog, toolchain, pinning rules, coverage and build conventions, principles). |
+| [references/conventions.md](references/conventions.md) | Always, before any review or creation — the full stack-agnostic spec (workflow shape, job catalog, pinning rules, coverage and build conventions, principles). |
+| [references/node.md](references/node.md) | The target repo is Node — runtime/install setup, toolchain, job-to-tool mapping, expected npm scripts. Skip for other stacks. |
 | [references/review-checklist.md](references/review-checklist.md) | Reviewing an existing workflow or a PR touching one — the 9-step procedure and the deviation-report format. |
 | [references/creation-guide.md](references/creation-guide.md) | Bootstrapping a repo that has no workflow yet. |
 

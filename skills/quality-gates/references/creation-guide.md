@@ -6,10 +6,9 @@ all of it.
 
 ## Steps
 
-1. Confirm the stack (default: the Node 24 toolchain in conventions.md) and
-   that the npm scripts the jobs call exist (`lint`, `typecheck`, `build`,
-   `test:<tier>` with coverage variants, `docs:build`). Create missing ones as
-   part of the same change — a job must never reference a script that does not
+1. Confirm the stack and read its reference (default: Node — [node.md](node.md)).
+   Verify the scripts/commands the jobs call exist; create missing ones as part
+   of the same change — a job must never reference a script that does not
    exist.
 2. Write `quality-gates.yaml` with the canonical shape and full job catalog.
 3. Resolve **current** action versions and their commit SHAs yourself (from the
