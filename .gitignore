@@ -141,3 +141,44 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Agentic tooling / AI assistant folders
+.claude/
+.cursor/
+.copilot/
+.continue/
+.aider*
+.codeium/
+.tabnine/
+.windsurf/
+.zed/
+.vibe/
+.agent/
+.agents/
+.mcp/
+.roo/
+.cody/
+.codegpt/
+.blackbox/
+.gemini/
+.qwen/
+.trae/
+.serena/
+.goose/
+.opencode/
+.crush/
+.loom/
+.spec/
+.cline/
+.clinerules/
+.devin/
+.cursorrules
+.windsurfrules
+.aider.conf
+.aider.conf.yml
+.aider.input.history
+.aider.chat.history.md
+.aider.tags.cache.v3/
+
+# Note: AGENTS.md, CLAUDE.md, .cursor/rules, and similar instruction files
+# are intentionally NOT ignored so they can be committed and shared with the team.
