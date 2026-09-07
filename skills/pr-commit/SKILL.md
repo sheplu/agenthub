@@ -28,9 +28,11 @@ unavailable the same rules are applied manually.
   is in `commit-rules.md`.
 - **Atomic commits** — one logical change each; never mix refactors with
   behavior changes.
-- **PRs are short and focused**: conventional title, body is a Summary
-  (linking the issue) plus a Breaking-changes section *only when something
-  breaks*. One concern per PR; squash-merge; details in `pr-rules.md`.
+- **PR bodies optimize for the reader**: conventional title; a Summary
+  (linking the issue) always, Breaking changes *only when something breaks*;
+  extra sections, images, or length only when they help that PR read faster.
+  Never re-explain the diff; keep the body current with it. One concern per
+  PR; squash-merge; details in `pr-rules.md`.
 - **Branch names**: never use an AI-harness prefix (`claude/`, `vibe/`, …);
   otherwise any short descriptive name.
 

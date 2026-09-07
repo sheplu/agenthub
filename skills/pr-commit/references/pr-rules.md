@@ -28,7 +28,7 @@ npx @sheplu/commit-sentinel --preset hardened --message "<PR title>"
 
 ## Body
 
-Short and focused — exactly these sections, nothing else:
+Optimize for the reviewer's reading, not for a fixed shape. The baseline:
 
 ```markdown
 ## Summary
@@ -45,10 +45,16 @@ affected, how to migrate.
   PR does not fully resolve it).
 - **Breaking changes** only when the PR actually breaks something — omit the
   section entirely otherwise.
-- UI or CLI behavior changes: include a screenshot or captured output in the
-  Summary.
-- No other mandatory sections — a reviewer should grasp the PR from the
-  Summary alone.
+- Beyond the baseline, add whatever genuinely helps *this* PR read faster:
+  screenshots or captured output (required for UI or CLI behavior changes),
+  a short architecture sketch, a testing note, extra sections. Length is not
+  the enemy — noise is.
+- The body must **bring what the diff cannot say**: motivation, trade-offs,
+  context, visuals. Never re-explain the code change by change — reviewers
+  read the diff; a body that narrates it is noise, however short.
+- Keep the body **up to date**: when the PR changes direction or scope during
+  review, update the description to match the final diff. A stale body is
+  worse than a terse one.
 
 ## Scope
 
@@ -62,7 +68,8 @@ affected, how to migrate.
 ## Process and merge strategy
 
 1. **Self-review first**: read the full diff yourself before requesting
-   review; fix what you would have flagged.
+   review; fix what you would have flagged, and confirm the body still
+   matches the final diff.
 2. **Rebase, never merge**: keep the branch current by rebasing on `main`;
    no merge commits into the branch.
 3. **Gate 2 before requesting review**: the whole branch validates clean
