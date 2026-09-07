@@ -17,7 +17,8 @@ body explaining why the change is made, wrapped at 100 columns
 BREAKING CHANGE: description of what breaks and how to migrate
 ```
 
-- Header, blank line, body; footers (if any) come last, each `Token: value`.
+- Header, blank line, body; footers (if any) come last, each `Token: value`
+  or the git-trailer form `Token #ref` (e.g. `Closes #6`).
 - A breaking change adds `!` after the scope — `type(scope)!: subject` — and
   **must** carry a `BREAKING CHANGE:` footer.
 
@@ -72,9 +73,15 @@ Exit codes: `0` pass, `1` usage/config error, `2` rule failure.
 | **1b** | After `git commit` | `npx @sheplu/commit-sentinel --preset hardened --commit HEAD` |
 | **2** | Before opening/updating a PR | `npx @sheplu/commit-sentinel --preset hardened --base origin/main` |
 
+The commands show the no-config invocation against a `main` default branch:
+drop `--preset hardened` when the repo ships its own config (precedence
+above), and substitute the repo's actual default branch in `--base`.
+
 Gate 1b exists because `--message` validates content only — the git-metadata
 rules (`signed`, `author-email`) need a real commit, so `--commit HEAD` closes
 the gap. Gate 2 re-validates every commit on the branch including metadata.
+Gate 3 (the PR title) applies the header rules only — see
+[pr-rules.md](pr-rules.md).
 
 On any failure: fix the message (`git commit --amend`, or reword via rebase
 for older commits) and re-run the gate until it passes. **Never** bypass a
@@ -86,8 +93,10 @@ When commit-sentinel cannot run (package not yet published to npm, offline,
 or Node < 24), apply the gates yourself: check the drafted message against
 **every row** of the two rule tables above, and confirm the commit is signed
 after committing (`git log -1 --format=%G?` — anything except `N` means a
-signature is present). Tell the user validation was manual; do not mention it
-in the PR body.
+signature is present; this deliberately uses the presence semantics proposed
+in [commit-sentinel#27](https://github.com/sheplu/commit-sentinel/issues/27),
+counting unverifiable-here signatures the current tool rejects). Tell the
+user validation was manual; do not mention it in the PR body.
 
 ## Signing
 

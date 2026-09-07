@@ -6,7 +6,7 @@ rules and the validation gates live in [commit-rules.md](commit-rules.md).
 
 ## Branch naming
 
-One rule: **never use an AI-harness prefix** — no branch generated-looking
+One rule: **never use an AI-harness prefix** — no generated-looking branch
 names like `claude/…`, `vibe/…`, `copilot/…`, `cursor/…`, `codex/…`,
 `devin/…`, or any other tool-identifying prefix. Branches read as human work:
 short, descriptive, otherwise unconstrained (e.g. `feat/pr-commit-skill`,
@@ -17,14 +17,14 @@ short, descriptive, otherwise unconstrained (e.g. `feat/pr-commit-skill`,
 The PR title **is** a commit header: squash-merge makes it the final commit
 on `main`. It follows every header rule from
 [commit-rules.md](commit-rules.md) — `type(scope): subject`, the same type
-list, ≤ 72 subject, lowercase first letter, no trailing period — and is
-validated through gate 3:
+list, ≤ 72 subject, lowercase first letter, no trailing period.
 
-```
-npx @sheplu/commit-sentinel --preset hardened --message "<PR title>"
-```
-
-(Same repo-config precedence and manual fallback as the commit gates.)
+**Gate 3** checks the title against those **header rules only** — apply them
+manually. Do not run a bare title through `--message`: under the hardened
+preset it false-fails `body-required` (the CLI has no header-only mode). To
+use the tool anyway, validate the title with the PR Summary appended as a
+stand-in body — a faithful proxy for the squash commit under the merge
+setting below.
 
 ## Body
 
@@ -75,6 +75,10 @@ affected, how to migrate.
 3. **Gate 2 before requesting review**: the whole branch validates clean
    (`--base origin/main`).
 4. **Squash-merge to `main`** — the PR title becomes the commit header, so
-   gate 3 already validated it.
+   gate 3 already validated it. Configure the repository's squash-message
+   setting to **"Pull request title and description"**: the merged commit is
+   the one artifact no gate re-validates (GitHub creates and signs it at
+   merge time), and this setting is what keeps a meaningful body on `main`
+   instead of an auto-generated commit list or nothing.
 5. Branch protection: merging requires green CI and at least one approving
    review.
