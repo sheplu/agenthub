@@ -155,17 +155,16 @@ The shell reads it as a variable, not as code to evaluate. When interpolated
 via `${{ }}` in `run:`, the value is pasted into the shell script text before
 execution — a title like `"; rm -rf / #` becomes part of the command.
 
-**Safe expressions.** Some expressions are safe to use inline because their
-values are controlled:
+**Lower-risk expressions.** No context value is fully safe to interpolate
+inline. These are lower risk because their values are workflow-controlled:
 - `${{ github.sha }}` — always a hex SHA.
 - `${{ github.run_id }}`, `${{ github.run_number }}` — always numeric.
-- `${{ github.event.pull_request.base.ref }}` — the base branch name,
-  controlled by the repository (not the PR author).
 - `${{ matrix.* }}` — defined in your own workflow.
-- `${{ secrets.* }}` — controlled by repo admins.
 
-Even for safe expressions, routing them through `env:` is preferable for
-readability and consistency.
+Route every expression through `env:` — including `${{ secrets.* }}`, whose
+values may contain shell metacharacters, and
+`${{ github.event.pull_request.base.ref }}`, which the PR author selects
+and whose branch name can contain shell metacharacters.
 
 ## Secrets handling
 
@@ -202,10 +201,10 @@ readability and consistency.
 
 ### `pull_request` (safe default)
 
-Workflows triggered by `pull_request` run in the **fork's context**: they
-have read-only access to the base repository, no access to the base repo's
-secrets, and their `GITHUB_TOKEN` has minimal permissions. This is the correct
-trigger for CI gates on open-source repositories.
+Workflows triggered by `pull_request` from a **fork** get a read-only token
+and no access to the base repo's secrets. For **same-repo PRs**, secrets
+and the default token permissions remain available — PR code is untrusted
+regardless of origin. This is the correct trigger for CI gates.
 
 ### `pull_request_target` (dangerous)
 
@@ -244,6 +243,10 @@ The `workflow_run` trigger fires in the base repo context **after** the
 referenced workflow completes. It can read the completed workflow's artifacts
 and post results. The untrusted code has already finished executing in a
 sandboxed `pull_request` context.
+
+Artifacts produced from fork PR code are **untrusted** — never execute,
+source, or eval them in this privileged context. Consume them only as data
+(parse reports, render comments) and validate their format first.
 
 ## OIDC and keyless authentication
 

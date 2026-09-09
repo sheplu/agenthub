@@ -49,7 +49,8 @@ quality-gates decides _what_ to run; this skill decides _how_ to write it.
   Display names: **Title Case**, grouped by tier where applicable.
 - Every CI gate workflow shares the **canonical shape**: `pull_request` →
   `main`, concurrency, `permissions: contents: read`.
-- `run: |` with **`set -euo pipefail`** for non-trivial shell scripts.
+- `run: |` with **`set -euo pipefail`** for every block containing more than
+  one command.
 - **No `continue-on-error`** except on non-critical reporting steps (e.g.
   posting a PR comment).
 

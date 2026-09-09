@@ -50,9 +50,10 @@ jobs:
   unit:           # ✗  noun, not a verb phrase
 ```
 
-**The job ID is a permanent API contract.** Branch protection rules reference
-job IDs by name. Renaming a job ID breaks every branch protection rule that
-requires it as a status check. Treat job ID changes as breaking changes —
+**The job display name is the branch-protection contract.** Required status
+checks match the check run's name — the job's `name:` when set. Renaming a
+display name breaks every branch protection rule that requires it; renaming
+the job ID alone does not. Treat display-name changes as breaking changes —
 update branch protection in the same PR or coordinate the rename.
 
 ## Job display names
@@ -244,6 +245,7 @@ jobs:
     steps:
       - name: Download Scanner
         run: |
+          set -euo pipefail
           curl -sSLo osv-scanner \
             "https://…/v${OSV_VERSION}/osv-scanner_linux_arm64"
           echo "${OSV_SHA256}  osv-scanner" | sha256sum -c -
