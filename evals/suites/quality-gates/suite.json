@@ -4,9 +4,10 @@
   "prompt": "prompt.md",
   "expected": "expected.json",
   "fixturesDir": "fixtures",
-  "harnesses": ["claude", "opencode", "vibe"],
+  "harnesses": ["claude", "codex", "opencode", "vibe"],
   "models": {
     "claude": ["default"],
+    "codex": ["default"],
     "opencode": ["default"],
     "vibe": ["default"]
   },

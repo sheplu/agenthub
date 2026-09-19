@@ -1,9 +1,10 @@
 # Skill benchmarking framework
 
-Benchmarks the skills under `skills/` across coding-agent harnesses and
-models: does the skill work as expected, does a new version degrade quality,
-and does it hold up equally across harnesses? Runs locally, scores
-deterministically (no LLM judge), and prints a markdown matrix.
+Benchmarks the skills under `skills/` across coding-agent harnesses (claude,
+codex, opencode, vibe) and models: does the skill work as expected, does a
+new version degrade quality, and does it hold up equally across harnesses?
+Runs locally, scores deterministically (no LLM judge), and prints a markdown
+matrix.
 
 ## How it works
 
@@ -60,6 +61,7 @@ you which version each report measured.
 | | turn cap | price cap | read-only tools | hard stop |
 | --- | --- | --- | --- | --- |
 | claude | `--max-turns` | — | `--allowedTools Read Glob Grep` | runner timeout |
+| codex | — | — | `--sandbox read-only` (native) | runner timeout |
 | opencode | — | — | sandbox `opencode.json` denies edit/bash/webfetch | runner timeout |
 | vibe | `--max-turns` | `--max-price` | `--enabled-tools read*/grep*/glob*/…` | runner timeout |
 
