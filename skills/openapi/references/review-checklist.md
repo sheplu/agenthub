@@ -12,7 +12,7 @@ against them.
    parse error exists, stop — nothing else can be meaningfully reviewed.
 
 2. **File location and naming.** The spec is `openapi.yaml` at the repo root.
-   The Spectral config is `spectral.config.yaml` at the repo root. Flag any
+   The Spectral config is `.spectral.yaml` at the repo root. Flag any
    deviation in name or location.
 
 3. **Info block.** Check all required fields per `spec-conventions.md`: `title`,
@@ -45,9 +45,10 @@ against them.
 
 11. **Documentation hygiene.** No `eval()` or `<script>` in descriptions.
 
-12. **Spectral config.** Extends all six rulesets (three built-in, three
-    community — see `spectral-ruleset.md`). Every deactivated rule has a
-    comment explaining why. No rule is silenced without a recorded rationale.
+12. **Spectral config.** Extends all four rulesets (one built-in, three
+    community — see `spectral-ruleset.md`), each in `all` mode so every rule
+    is active. Every deactivated rule has a comment explaining why. No rule
+    is silenced without a recorded rationale.
 
 13. **Local lint.** Run `npx @stoplight/spectral-cli lint openapi.yaml` — zero
     error-severity findings.

@@ -36,6 +36,10 @@ At least one `servers` entry. Use a real or realistic base URL — never
 `example.com` or a placeholder host. All server URLs should use HTTPS (the
 OWASP ruleset enforces this). For local development, use environment-specific
 configuration rather than listing `http://localhost` in the committed spec.
+Every server entry must also declare `x-internal: true` or `false` and a
+`description` naming its environment (e.g. production, staging) — the
+`owasp:api9:2023-inventory-access` and
+`owasp:api9:2023-inventory-environment` rules block merges without them.
 
 ## Path conventions
 
@@ -54,7 +58,7 @@ Every operation (each HTTP method on a path) must have:
 | Field | Rule |
 | --- | --- |
 | `operationId` | Unique across the entire spec, URL-safe (letters, digits, hyphens, underscores). Convention: `verbNoun` camelCase (e.g. `listUsers`, `getUserById`, `createProject`). |
-| `summary` | One-line human-readable summary (≤120 characters). |
+| `summary` | One-line human-readable summary (≤80 characters — the `ibm-operation-summary-length` rule blocks longer summaries at error severity). |
 | `description` | Fuller description of behavior, side effects, and non-obvious semantics. May be omitted only when the summary is fully self-explanatory. |
 | `tags` | At least one tag. Tags group operations in generated documentation. |
 | `responses` | At minimum a 2xx success response. Should also include 4xx client-error responses for expected failure modes (400, 401, 403, 404, 422 as applicable). Include 3xx only when the endpoint actually redirects. |
@@ -62,6 +66,12 @@ Every operation (each HTTP method on a path) must have:
 ### Response objects
 
 - Every response has a `description`.
+- Every 2xx and 4xx response defines rate-limit headers (e.g.
+  `RateLimit-Limit`; use standardized names, never `X-` prefixes), and every
+  response defines `Access-Control-Allow-Origin` — the
+  `owasp:api4:2023-rate-limit`, `owasp:api4:2023-rate-limit-retry-after`
+  (429 responses need `Retry-After`), and
+  `owasp:api8:2023-define-cors-origin` rules block merges without them.
 - Success responses (2xx) include a `content` block with the response media
   type and schema, unless the response is `204 No Content`.
 - Error responses (4xx, 5xx) use a shared error schema via `$ref` to
@@ -73,9 +83,13 @@ Every operation (each HTTP method on a path) must have:
   under `components/schemas` and reference it via `$ref` in paths. Prefer
   extracting inline object schemas — the exception is OAS 3.1+ nullable
   patterns (`oneOf` with `type: "null"`) where inline is unavoidable.
-- **No `$ref` siblings**: a `$ref` keyword must be the only key in its object.
-  Do not place `description`, `nullable`, or other keywords alongside `$ref` —
-  use `allOf` wrapping when additional constraints are needed.
+- **No `$ref` siblings (house rule)**: a `$ref` keyword must be the only key
+  in its object. Do not place `description`, `nullable`, or other keywords
+  alongside `$ref` — use `allOf` wrapping when additional constraints are
+  needed. Siblings are legal under OpenAPI 3.1 (JSON Schema 2020-12), and
+  Spectral's `no-$ref-siblings` rule enforces this only on OAS 2.0/3.0
+  documents — this house rule is kept for tooling compatibility and is
+  review-enforced on 3.1+ specs.
 - **No duplicated enum entries**: every `enum` array contains unique values.
 - **Array `items`**: every `type: array` has an `items` keyword defining the
   element schema.
@@ -87,21 +101,24 @@ Every operation (each HTTP method on a path) must have:
 
 ## Security
 
-- Define at least one security scheme in `components/securitySchemes`.
+- Define at least one security scheme in `components/securitySchemes` — the
+  `no-security-schemes-defined` rule blocks merges when a `components` object
+  exists without `securitySchemes`.
 - Apply `security` at the spec level (default for all operations) or at the
-  individual operation level. Every operation must be covered — the
-  `oas3-operation-security-defined` and `oas3-api-security-defined` rules
-  enforce this.
+  individual operation level. Write operations (POST, PUT, PATCH, DELETE)
+  without security block the merge (`owasp:api2:2023-write-restricted`);
+  unprotected read operations produce a warning
+  (`owasp:api2:2023-read-restricted`) that reviewers must flag explicitly.
 - For public endpoints that genuinely require no authentication, apply an
-  empty security requirement (`security: [{}]`) explicitly rather than omitting
-  the field.
+  empty security requirement (`security: [{}]`) explicitly rather than
+  omitting the field.
 
 ## Tags
 
 - Every tag used on an operation is declared in the top-level `tags` array.
 - Every tag has a `description`.
-- Tags are listed in **alphabetical order** — the `tags-alphabetical` rule
-  enforces this.
+- Tags are listed in **alphabetical order** — the
+  `openapi-tags-alphabetical` rule enforces this.
 
 ## Streaming and Server-Sent Events (SSE)
 

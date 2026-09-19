@@ -18,14 +18,15 @@ merge. Run `npx @stoplight/spectral-cli lint openapi.yaml` locally to verify.
 ### Spec
 
 - **Default layout**: a single `openapi.yaml` at the repository root, OpenAPI
-  3.1 or later, `info.version` tracks the package version. Large projects may split the
-  spec into multiple files using `$ref` to external documents — the root file
-  remains the entry point.
+  3.1 or later, `info.version` tracks the package version. Large projects
+  may split the spec into multiple files using `$ref` to external documents
+  — the root file remains the entry point.
 - **Paths**: kebab-case segments, no trailing slashes, every parameter
   described.
 - **Operations**: every operation has a unique URL-safe `operationId`,
-  `summary`, `description`, at least one tag, and response codes for 2xx, 3xx,
-  and 4xx.
+  `summary`, `description`, at least one tag, and a 2xx response. Include 4xx
+  for expected failure modes and 3xx only when the endpoint actually
+  redirects.
 - **Schemas**: all schemas in `components/schemas`, referenced via `$ref`
   everywhere — no inline object schemas in paths, no `$ref` siblings, no
   duplicated enum entries, `items` on every array, examples that validate.
@@ -38,12 +39,14 @@ merge. Run `npx @stoplight/spectral-cli lint openapi.yaml` locally to verify.
 
 ### Linting
 
-- **Config**: `spectral.config.yaml` at the repository root.
-- **Six rulesets**: built-in (`spectral:oas`, `spectral:oas3-api`,
-  `spectral:api`) plus community (`@ibm-cloud/openapi-ruleset`,
-  `@stoplight/spectral-owasp-ruleset`, `@apisyouwonthate/style-guide`).
-- **All rules active by default** — the config only lists rules that are
-  explicitly turned off with rationale. See `spectral-ruleset.md`.
+- **Config**: `.spectral.yaml` at the repository root — Spectral
+  auto-discovers this name, no `--ruleset` flag needed.
+- **Four rulesets**: the built-in `spectral:oas` plus community
+  (`@ibm-cloud/openapi-ruleset`, `@stoplight/spectral-owasp-ruleset`,
+  `@apisyouwonthate/style-guide`).
+- **Every rule active** — the config extends each ruleset in `all` mode, so
+  it only lists rules that are explicitly turned off with rationale. See
+  `spectral-ruleset.md`.
 
 The exact rules, rationale, and examples live in the reference files below —
 never guess details from this summary.
@@ -55,6 +58,5 @@ Read these on demand — do not guess details from the summary above:
 | File | Read when |
 | --- | --- |
 | [references/spec-conventions.md](references/spec-conventions.md) | Always, before writing or reviewing any spec — file location, versioning, info block, path/operation/schema/security/tag conventions. |
-| [references/spectral-ruleset.md](references/spectral-ruleset.md) | Configuring or reviewing the Spectral linter — base rulesets, the full rule catalog by category, how to run locally, adding custom rules. |
+| [references/spectral-ruleset.md](references/spectral-ruleset.md) | Configuring or reviewing the Spectral linter — base rulesets, merge-blocking rules, common deactivations, config template, how to run locally, adding custom rules. |
 | [references/review-checklist.md](references/review-checklist.md) | Reviewing a PR that touches the spec or linting config — the step-by-step audit procedure and deviation-report format. |
-
