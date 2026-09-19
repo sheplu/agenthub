@@ -47,7 +47,13 @@ const { values: flags, positionals } = parseArgs({
 });
 
 function csv(value: string | undefined): string[] {
-  return value ? value.split(",").map((item) => item.trim()).filter(Boolean) : [];
+  return value ? [...new Set(value.split(",").map((item) => item.trim()).filter(Boolean))] : [];
+}
+
+function positiveNumber(name: string, raw: string | number): number {
+  const value = Number(raw);
+  if (!Number.isFinite(value) || value <= 0) throw new Error(`invalid --${name}: ${raw}`);
+  return value;
 }
 
 function usage(): never {
@@ -63,6 +69,13 @@ async function commandRun(): Promise<void> {
   const suite = await loadSuite(suitesRoot, flags.suite);
   const adapters = getAdapters({ mockDir: flags["mock-dir"] ? resolve(flags["mock-dir"]) : null });
   const harnesses = csv(flags.harness).length > 0 ? csv(flags.harness) : suite.config.harnesses;
+  for (const harness of harnesses) {
+    if (!adapters.has(harness)) throw new Error(`unknown harness '${harness}' (known: ${[...adapters.keys()].join(", ")})`);
+  }
+  const fixtures = csv(flags.fixture);
+  for (const fixture of fixtures) {
+    if (!suite.fixtures.includes(fixture)) throw new Error(`unknown fixture '${fixture}' (known: ${suite.fixtures.join(", ")})`);
+  }
   const runs = flags.regression ? suite.config.regressionRuns : Number(flags.runs ?? "1");
   if (!Number.isInteger(runs) || runs < 1) throw new Error(`invalid --runs: ${flags.runs}`);
 
@@ -75,12 +88,12 @@ async function commandRun(): Promise<void> {
     adapters,
     harnesses,
     modelsOverride: csv(flags.model).length > 0 ? csv(flags.model) : null,
-    fixtures: csv(flags.fixture),
+    fixtures,
     runs,
-    concurrency: Number(flags.concurrency),
-    timeoutSeconds: Number(flags.timeout ?? suite.config.timeoutSeconds),
-    maxTurns: Number(flags["max-turns"] ?? suite.config.maxTurns),
-    maxPriceUsd: Number(flags["max-price"] ?? suite.config.maxPriceUsd),
+    concurrency: positiveNumber("concurrency", flags.concurrency),
+    timeoutSeconds: positiveNumber("timeout", flags.timeout ?? suite.config.timeoutSeconds),
+    maxTurns: positiveNumber("max-turns", flags["max-turns"] ?? suite.config.maxTurns),
+    maxPriceUsd: positiveNumber("max-price", flags["max-price"] ?? suite.config.maxPriceUsd),
     repoRoot,
     resultsDir,
     keepSandbox: flags["keep-sandbox"],
@@ -89,7 +102,7 @@ async function commandRun(): Promise<void> {
 
   if (flags["dry-run"]) {
     const specs = expandCells(options, new Set(harnesses));
-    console.log(`${specs.length} cell(s):`);
+    console.log(`${specs.length} cell(s) (assumes every harness binary is available):`);
     for (const spec of specs) console.log(`  ${cellId(spec)}`);
     return;
   }
@@ -100,6 +113,10 @@ async function commandRun(): Promise<void> {
   await writeFile(join(resultsDir, "report.md"), `${report}\n`);
   console.log(report);
   console.error(`\nresults: ${resultsDir}`);
+  if (cells.length === 0) {
+    console.error("bench: no cells ran (every requested harness was skipped) — failing the run");
+    process.exitCode = 1;
+  }
 }
 
 async function commandScore(): Promise<void> {
@@ -107,7 +124,7 @@ async function commandScore(): Promise<void> {
   if (!resultsDir) usage();
   const meta = JSON.parse(await readFile(join(resultsDir, "meta.json"), "utf8")) as RunMeta;
   const suite = await loadSuite(suitesRoot, meta.suite);
-  const adapters = getAdapters({ mockDir: "(score)" });
+  const adapters = getAdapters();
   const cellFiles = (await readdir(join(resultsDir, "cells"))).filter((name) => name.endsWith(".json"));
   const cells: CellResult[] = [];
   for (const file of cellFiles.sort()) {
@@ -133,7 +150,7 @@ async function commandScore(): Promise<void> {
 }
 
 async function commandList(): Promise<void> {
-  const adapters = getAdapters({ mockDir: "(any)" });
+  const adapters = getAdapters();
   console.log("harnesses:");
   for (const adapter of adapters.values()) {
     const version = await adapter.version();

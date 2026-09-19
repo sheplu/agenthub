@@ -29,6 +29,19 @@ test("extractContract finds DEVIATION lines and NO DEVIATIONS", () => {
   assert.equal(extractContract("no deviations").noDeviations, true);
 });
 
+test("markdown-decorated verdicts still satisfy the contract", () => {
+  assert.equal(extractContract("**NO DEVIATIONS**").noDeviations, true);
+  assert.equal(extractContract("`NO DEVIATIONS`").noDeviations, true);
+  assert.equal(extractContract("> _NO DEVIATIONS._").noDeviations, true);
+
+  const bold = extractContract("- **DEVIATION**: quality-gates.yaml:1 tag-pinned checkout");
+  assert.equal(bold.deviationLines.length, 1);
+  assert.match(bold.deviationLines[0] as string, /tag-pinned/);
+
+  const boldColonInside = extractContract("**DEVIATION:** sast.yaml:5 wrong runner");
+  assert.equal(boldColonInside.deviationLines.length, 1);
+});
+
 test("perfect recall and precision", () => {
   const score = scoreCell(cell("DEVIATION: quality-gates.yaml:23 checkout pinned by tag not sha"), [
     finding("tag-pin", "quality-gates", "checkout", "pin|sha|tag"),

@@ -20,8 +20,11 @@ export interface ContractOutput {
   noDeviations: boolean;
 }
 
-const DEVIATION_RE = /^[\s>*-]*DEVIATION:\s*(.+)$/gim;
-const NO_DEVIATIONS_RE = /^[\s>*-]*NO DEVIATIONS[.!]?\s*$/im;
+// Tolerant of markdown decoration around the keywords (bullets, quotes,
+// bold/italic markers, backticks) — "**DEVIATION**: …" and "`NO DEVIATIONS`"
+// are compliant answers, not contract violations.
+const DEVIATION_RE = /^[\s>#*_`-]*DEVIATION[*_`]*:\s*(.+)$/gim;
+const NO_DEVIATIONS_RE = /^[\s>#*_`-]*NO DEVIATIONS[\s*_`.!]*$/im;
 
 export function extractContract(finalText: string): ContractOutput {
   const deviationLines = [...finalText.matchAll(DEVIATION_RE)]

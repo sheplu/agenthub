@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { execFile } from "node:child_process";
-import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
+import { mkdtemp, readFile, readdir, rm, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 import { promisify } from "node:util";
 import type { CellResult, RunMeta } from "../types.ts";
 
@@ -69,9 +69,13 @@ test("bench run with the mock harness produces scored cells and a report", async
 
 test("missing harness binaries are skipped gracefully", async () => {
   const resultsDir = await mkdtemp(join(tmpdir(), "agenthub-bench-test-"));
+  // A bin dir containing ONLY node: dirname(process.execPath) must not be on
+  // PATH — npm-global shims like `claude` live right next to node, and this
+  // test must never be able to spawn a real (paid) harness.
+  const binDir = await mkdtemp(join(tmpdir(), "agenthub-bench-bin-"));
+  await symlink(process.execPath, join(binDir, "node"));
   try {
-    // PATH with node but without claude/opencode/vibe.
-    const path = `${dirname(process.execPath)}:/usr/bin:/bin`;
+    const path = `${binDir}:/usr/bin:/bin`;
     await execFileAsync(
       process.execPath,
       [
@@ -94,6 +98,7 @@ test("missing harness binaries are skipped gracefully", async () => {
     assert.equal(cellFiles.length, 1, "only the mock cell ran");
   } finally {
     await rm(resultsDir, { recursive: true, force: true });
+    await rm(binDir, { recursive: true, force: true });
   }
 });
 

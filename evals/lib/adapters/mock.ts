@@ -15,7 +15,7 @@ import type { BuildCommandOptions, HarnessAdapter, HarnessCommand } from "./type
  *   #READS: skill/references/conventions.md, workspace/...
  * A missing #READS means "transcript exposes no tool calls" (reported n/a).
  */
-export function createMockAdapter(mockDir: string): HarnessAdapter {
+export function createMockAdapter(mockDir: string | null): HarnessAdapter {
   const replayScript = join(import.meta.dirname, "mock-replay.ts");
 
   return {
@@ -27,6 +27,9 @@ export function createMockAdapter(mockDir: string): HarnessAdapter {
     },
 
     buildCommand(opts: BuildCommandOptions): HarnessCommand {
+      if (mockDir === null) {
+        throw new Error("the mock harness needs --mock-dir <canned-transcripts-dir>");
+      }
       const transcriptFile = join(mockDir, `${opts.fixture}.txt`);
       return {
         argv: ["node", replayScript, transcriptFile],

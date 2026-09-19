@@ -1,9 +1,5 @@
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
 import type { TranscriptInfo } from "../types.ts";
-import type { BuildCommandOptions, HarnessAdapter, HarnessCommand } from "./types.ts";
-
-const execFileAsync = promisify(execFile);
+import { probeVersion, type BuildCommandOptions, type HarnessAdapter, type HarnessCommand } from "./types.ts";
 
 /**
  * vibe adapter.
@@ -20,14 +16,11 @@ const execFileAsync = promisify(execFile);
 export const vibeAdapter: HarnessAdapter = {
   name: "vibe",
   binary: "vibe",
+  // No model flag: the matrix expansion drops model overrides for vibe.
+  supportsModelFlag: false,
 
   async version(): Promise<string | null> {
-    try {
-      const { stdout } = await execFileAsync("vibe", ["--version"]);
-      return stdout.trim() || null;
-    } catch {
-      return null;
-    }
+    return probeVersion("vibe");
   },
 
   buildCommand(opts: BuildCommandOptions): HarnessCommand {

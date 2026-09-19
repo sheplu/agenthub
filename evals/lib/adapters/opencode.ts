@@ -1,11 +1,7 @@
-import { execFile } from "node:child_process";
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { promisify } from "node:util";
 import type { TranscriptInfo } from "../types.ts";
-import type { BuildCommandOptions, HarnessAdapter, HarnessCommand } from "./types.ts";
-
-const execFileAsync = promisify(execFile);
+import { probeVersion, type BuildCommandOptions, type HarnessAdapter, type HarnessCommand } from "./types.ts";
 
 /**
  * opencode adapter.
@@ -29,12 +25,7 @@ export const opencodeAdapter: HarnessAdapter = {
   maxConcurrency: 1,
 
   async version(): Promise<string | null> {
-    try {
-      const { stdout } = await execFileAsync("opencode", ["--version"]);
-      return stdout.trim() || null;
-    } catch {
-      return null;
-    }
+    return probeVersion("opencode");
   },
 
   async prepare(sandboxDir: string): Promise<void> {
@@ -57,8 +48,9 @@ export const opencodeAdapter: HarnessAdapter = {
   },
 
   parseTranscript(stdout: string): TranscriptInfo {
-    // Text parts keyed by message, so finalText is the last message's text.
-    const textByMessage = new Map<string, string[]>();
+    // Text parts keyed by part id (a re-emitted part replaces its earlier
+    // text instead of duplicating it); finalText is the last message's text.
+    const textParts = new Map<string, { messageId: string; text: string }>();
     let lastMessageId: string | null = null;
     let costUsd: number | null = null;
     let steps = 0;
@@ -77,9 +69,8 @@ export const opencodeAdapter: HarnessAdapter = {
 
       if (event["type"] === "text" && typeof part["text"] === "string") {
         const messageId = typeof part["messageID"] === "string" ? part["messageID"] : "?";
-        const texts = textByMessage.get(messageId) ?? [];
-        texts.push(part["text"]);
-        textByMessage.set(messageId, texts);
+        const partId = typeof part["id"] === "string" ? part["id"] : `?${textParts.size}`;
+        textParts.set(partId, { messageId, text: part["text"] });
         lastMessageId = messageId;
       } else if (event["type"] === "step_start") {
         steps += 1;
@@ -95,7 +86,13 @@ export const opencodeAdapter: HarnessAdapter = {
       }
     }
 
-    const finalText = lastMessageId === null ? "" : (textByMessage.get(lastMessageId) ?? []).join("\n");
+    const finalText =
+      lastMessageId === null
+        ? ""
+        : [...textParts.values()]
+            .filter((entry) => entry.messageId === lastMessageId)
+            .map((entry) => entry.text)
+            .join("\n");
     return {
       finalText,
       turns: steps > 0 ? steps : null,

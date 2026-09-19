@@ -1,9 +1,5 @@
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
 import type { TranscriptInfo } from "../types.ts";
-import type { BuildCommandOptions, HarnessAdapter, HarnessCommand } from "./types.ts";
-
-const execFileAsync = promisify(execFile);
+import { probeVersion, type BuildCommandOptions, type HarnessAdapter, type HarnessCommand } from "./types.ts";
 
 /**
  * Codex CLI adapter (OpenAI).
@@ -24,12 +20,7 @@ export const codexAdapter: HarnessAdapter = {
   binary: "codex",
 
   async version(): Promise<string | null> {
-    try {
-      const { stdout } = await execFileAsync("codex", ["--version"]);
-      return stdout.trim() || null;
-    } catch {
-      return null;
-    }
+    return probeVersion("codex");
   },
 
   buildCommand(opts: BuildCommandOptions): HarnessCommand {
@@ -72,9 +63,10 @@ export const codexAdapter: HarnessAdapter = {
           finalText = item["text"];
         } else if (item["type"] !== "agent_message" && item["type"] !== "reasoning") {
           // Tool-ish items: codex reads files through sandboxed shell
-          // commands, so collect any path-like/command strings.
+          // commands, so the command string is the only read evidence we
+          // have — best-effort (a grep for "references/" would also match).
           sawToolInfo = true;
-          for (const key of ["command", "path", "file_path", "pattern", "query"]) {
+          for (const key of ["command", "path", "file_path"]) {
             if (typeof item[key] === "string") toolReads.push(item[key]);
           }
         }

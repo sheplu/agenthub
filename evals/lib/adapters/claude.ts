@@ -1,9 +1,5 @@
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
 import type { TranscriptInfo } from "../types.ts";
-import type { BuildCommandOptions, HarnessAdapter, HarnessCommand } from "./types.ts";
-
-const execFileAsync = promisify(execFile);
+import { probeVersion, type BuildCommandOptions, type HarnessAdapter, type HarnessCommand } from "./types.ts";
 
 /**
  * Claude Code adapter.
@@ -23,12 +19,7 @@ export const claudeAdapter: HarnessAdapter = {
   binary: "claude",
 
   async version(): Promise<string | null> {
-    try {
-      const { stdout } = await execFileAsync("claude", ["--version"]);
-      return stdout.trim() || null;
-    } catch {
-      return null;
-    }
+    return probeVersion("claude");
   },
 
   buildCommand(opts: BuildCommandOptions): HarnessCommand {
@@ -80,7 +71,9 @@ export const claudeAdapter: HarnessAdapter = {
         for (const block of content as Record<string, unknown>[]) {
           if (block["type"] !== "tool_use") continue;
           const input = (block["input"] ?? {}) as Record<string, unknown>;
-          for (const key of ["file_path", "path", "pattern"]) {
+          // Path-like inputs only — a Grep *pattern* mentioning "references/"
+          // is not evidence that a reference file was read.
+          for (const key of ["file_path", "path"]) {
             if (typeof input[key] === "string") toolReads.push(input[key]);
           }
         }

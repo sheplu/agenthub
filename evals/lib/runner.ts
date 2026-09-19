@@ -2,7 +2,7 @@ import { spawn } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { HarnessAdapter } from "./adapters/types.ts";
-import { createSandbox } from "./sandbox.ts";
+import { createSandbox, type Sandbox } from "./sandbox.ts";
 import { skillVersion } from "./git.ts";
 import type { CellResult, CellSpec, CellStatus, RunMeta } from "./types.ts";
 import type { LoadedSuite } from "./config.ts";
@@ -28,16 +28,24 @@ export interface RunOptions {
 }
 
 export function cellId(spec: CellSpec): string {
-  const model = (spec.model ?? "default").replaceAll(/[/:\s]/g, "-");
+  const model = (spec.model ?? "default").replaceAll("/", "-").replaceAll(":", "_").replaceAll(/\s+/g, "-");
   return `${spec.harness}__${model}__${spec.fixture}__r${spec.runIndex}`;
 }
 
 export function expandCells(opts: RunOptions, available: Set<string>): CellSpec[] {
   const fixtures = opts.fixtures.length > 0 ? opts.fixtures : opts.suite.fixtures;
-  const cells: CellSpec[] = [];
+  const perHarness: CellSpec[][] = [];
   for (const harness of opts.harnesses) {
     if (!available.has(harness)) continue;
-    const models = opts.modelsOverride ?? opts.suite.config.models[harness] ?? ["default"];
+    let models = opts.modelsOverride ?? opts.suite.config.models[harness] ?? ["default"];
+    if (opts.adapters.get(harness)?.supportsModelFlag === false) {
+      const dropped = models.filter((model) => model !== "default");
+      if (dropped.length > 0) {
+        opts.log(`skipping model override for '${harness}' (no model flag): ${dropped.join(", ")}`);
+      }
+      models = models.includes("default") || opts.modelsOverride === null ? ["default"] : [];
+    }
+    const cells: CellSpec[] = [];
     for (const model of models) {
       for (const fixture of fixtures) {
         for (let runIndex = 0; runIndex < opts.runs; runIndex++) {
@@ -51,8 +59,19 @@ export function expandCells(opts: RunOptions, available: Set<string>): CellSpec[
         }
       }
     }
+    if (cells.length > 0) perHarness.push(cells);
   }
-  return cells;
+  // Interleave round-robin across harnesses: with a maxConcurrency-limited
+  // harness (opencode), a harness-major order would park every pool lane on
+  // its limiter while other harnesses still have runnable cells.
+  const interleaved: CellSpec[] = [];
+  for (let i = 0; perHarness.some((cells) => i < cells.length); i++) {
+    for (const cells of perHarness) {
+      const cell = cells[i];
+      if (cell !== undefined) interleaved.push(cell);
+    }
+  }
+  return interleaved;
 }
 
 async function binaryAvailable(binary: string): Promise<boolean> {
@@ -76,32 +95,53 @@ function runProcess(
 ): Promise<SpawnOutcome> {
   return new Promise((resolve) => {
     const [command, ...args] = argv;
+    // detached: own process group, so a timeout can kill the harness AND
+    // whatever subprocesses it spawned (shell tools, MCP servers).
     const child = spawn(command as string, args, {
       cwd: opts.cwd,
       env: { ...process.env, ...opts.env },
       stdio: ["pipe", "pipe", "pipe"],
+      detached: true,
     });
 
     const stdout: Buffer[] = [];
     const stderr: Buffer[] = [];
     let timedOut = false;
+    let settled = false;
+    const settle = (exitCode: number | null): void => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve({ stdout: Buffer.concat(stdout).toString(), stderr: Buffer.concat(stderr).toString(), exitCode, timedOut });
+    };
+    const killGroup = (signal: NodeJS.Signals): void => {
+      if (child.pid === undefined) return;
+      try {
+        process.kill(-child.pid, signal);
+      } catch {
+        child.kill(signal);
+      }
+    };
     const timer = setTimeout(() => {
       timedOut = true;
-      child.kill("SIGTERM");
-      setTimeout(() => child.kill("SIGKILL"), 5000).unref();
+      killGroup("SIGTERM");
+      setTimeout(() => killGroup("SIGKILL"), 5000).unref();
     }, opts.timeoutMs);
 
     child.stdout.on("data", (chunk: Buffer) => stdout.push(chunk));
     child.stderr.on("data", (chunk: Buffer) => stderr.push(chunk));
-    child.on("error", () => {
-      clearTimeout(timer);
-      resolve({ stdout: Buffer.concat(stdout).toString(), stderr: Buffer.concat(stderr).toString(), exitCode: null, timedOut });
-    });
-    child.on("close", (code) => {
-      clearTimeout(timer);
-      resolve({ stdout: Buffer.concat(stdout).toString(), stderr: Buffer.concat(stderr).toString(), exitCode: code, timedOut });
+    child.on("error", () => settle(null));
+    child.on("close", (code) => settle(code));
+    // 'close' waits for the stdio pipes to drain; a surviving grandchild
+    // holding them open would hang the cell forever. Fall back to 'exit'
+    // plus a short drain grace period.
+    child.on("exit", (code) => {
+      setTimeout(() => settle(code), 2000).unref();
     });
 
+    // EPIPE lands here when the process dies before consuming the prompt;
+    // without a listener it would crash the whole run.
+    child.stdin.on("error", () => {});
     if (opts.stdin !== undefined) child.stdin.write(opts.stdin);
     child.stdin.end();
   });
@@ -113,14 +153,16 @@ async function runCell(spec: CellSpec, opts: RunOptions): Promise<CellResult> {
   const startedAt = new Date().toISOString();
   const start = performance.now();
   const rawOutputFile = join("cells", `${id}.out.txt`);
-
-  const sandbox = await createSandbox({
-    skillDir: join(opts.repoRoot, "skills", opts.suite.config.skill),
-    fixtureDir: join(opts.suite.suiteDir, opts.suite.config.fixturesDir, spec.fixture),
-    keep: opts.keepSandbox,
-  });
+  let sandbox: Sandbox | null = null;
 
   try {
+    // Inside the try: a sandbox failure (missing skill dir, fs error) must
+    // mark this cell as error, not abort the whole matrix.
+    sandbox = await createSandbox({
+      skillDir: join(opts.repoRoot, "skills", opts.suite.config.skill),
+      fixtureDir: join(opts.suite.suiteDir, opts.suite.config.fixturesDir, spec.fixture),
+      keep: opts.keepSandbox,
+    });
     await adapter.prepare?.(sandbox.dir);
     const command = adapter.buildCommand({
       sandboxDir: sandbox.dir,
@@ -167,8 +209,10 @@ async function runCell(spec: CellSpec, opts: RunOptions): Promise<CellResult> {
       error: cause instanceof Error ? cause.message : String(cause),
     };
   } finally {
-    await sandbox.cleanup();
-    if (opts.keepSandbox) opts.log(`  sandbox kept: ${sandbox.dir} (${id})`);
+    if (sandbox !== null) {
+      await sandbox.cleanup();
+      if (opts.keepSandbox) opts.log(`  sandbox kept: ${sandbox.dir} (${id})`);
+    }
   }
 }
 

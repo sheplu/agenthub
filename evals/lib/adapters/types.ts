@@ -1,4 +1,18 @@
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import type { TranscriptInfo } from "../types.ts";
+
+const execFileAsync = promisify(execFile);
+
+/** Shared `<binary> --version` probe backing adapter.version(). */
+export async function probeVersion(binary: string): Promise<string | null> {
+  try {
+    const { stdout } = await execFileAsync(binary, ["--version"]);
+    return stdout.trim() || null;
+  } catch {
+    return null;
+  }
+}
 
 export interface BuildCommandOptions {
   /** Sandbox root: contains skill/ and workspace/. Used as cwd. */
@@ -35,6 +49,11 @@ export interface HarnessAdapter {
    * over its SQLite database ("database is locked").
    */
   maxConcurrency?: number;
+  /**
+   * false = the CLI has no model flag (vibe): the matrix expansion drops
+   * model overrides for this harness instead of generating error cells.
+   */
+  supportsModelFlag?: boolean;
   /** Harness version string for provenance (null if undetectable). */
   version(): Promise<string | null>;
   /** Optional sandbox preparation (e.g. drop a permissions config file). */
