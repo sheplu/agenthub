@@ -1,0 +1,8 @@
+#TURNS: 6
+#COST: 0.04
+#MODEL: mock-1
+#READS: skill/SKILL.md, skill/references/conventions.md, workspace/.github/workflows/quality-gates.yaml
+I reviewed the three workflow files against the skill's conventions.
+Everything checks out: shape, job catalog, runners, pinning, coverage, build.
+
+NO DEVIATIONS

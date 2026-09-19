@@ -1,0 +1,2 @@
+#EXIT: 1
+harness crashed before producing a verdict

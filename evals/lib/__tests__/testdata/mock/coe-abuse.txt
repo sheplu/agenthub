@@ -1,0 +1,5 @@
+#TURNS: 4
+#COST: 0.02
+#MODEL: mock-1
+The agent rambles and never emits the required verdict lines, violating the
+output contract. The scorer must flag this cell.
