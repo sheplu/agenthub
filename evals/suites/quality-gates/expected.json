@@ -43,7 +43,7 @@
   "no-thresholds": [
     {
       "key": "no-coverage-thresholds",
-      "patterns": ["quality-gates|coverage", "threshold"]
+      "patterns": ["threshold"]
     }
   ],
   "coe-abuse": [

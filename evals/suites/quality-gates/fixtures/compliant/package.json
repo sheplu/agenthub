@@ -8,7 +8,7 @@
     "build": "tsc -p tsconfig.build.json",
     "docs:build": "typedoc",
     "coverage:merge": "node scripts/merge-coverage.mjs",
-    "test:unit": "node --test --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=coverage/unit.lcov test/unit/",
+    "test:unit": "node --test --experimental-test-coverage --test-coverage-lines=85 --test-coverage-branches=80 --test-coverage-functions=85 --test-reporter=lcov --test-reporter-destination=coverage/unit.lcov test/unit/",
     "test:integration": "node --test --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=coverage/integration.lcov test/integration/",
     "test:smoke": "node --test --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=coverage/smoke.lcov test/smoke/",
     "test:fuzz": "node --test --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=coverage/fuzz.lcov test/fuzz/",

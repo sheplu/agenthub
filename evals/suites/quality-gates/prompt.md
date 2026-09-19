@@ -11,6 +11,12 @@ You are reviewing a repository's CI gate workflows. Follow these instructions ex
 ## Scope
 
 - Judge only what is verifiable from the files under `workspace/`.
+- The workspace is a **trimmed excerpt** of a larger repository: only the
+  CI-relevant files are included. Do NOT report deviations about files,
+  directories, or dependencies that are simply absent from the excerpt
+  (source code, tests, tool configs, devDependencies, artifacts of the build)
+  — judge the workflow files, and the `package.json` scripts they reference,
+  on their own terms.
 - Anything that cannot be verified from those files is **out of scope** — do
   NOT report it as a deviation. This includes: branch protection settings,
   GitHub repository configuration, whether per-repo numbers (coverage

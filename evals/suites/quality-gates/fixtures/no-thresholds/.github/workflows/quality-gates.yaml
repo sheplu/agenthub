@@ -68,6 +68,8 @@ jobs:
           npm pack --dry-run --json > pack-report.json
           node -e '
             const [pkg] = JSON.parse(require("node:fs").readFileSync("pack-report.json", "utf8"));
+            console.log("package contents:");
+            for (const f of pkg.files) console.log(`  ${f.path} (${f.size} B)`);
             const kb = Math.ceil(pkg.size / 1024);
             const max = Number(process.env.MAX_PACKAGE_SIZE_KB);
             console.log(`package size: ${kb} KiB (budget: ${max} KiB)`);
