@@ -1,0 +1,7 @@
+#TURNS: 5
+#COST: 0.03
+#MODEL: mock-1
+#READS: skill/SKILL.md, skill/references/conventions.md
+Caught the semgrep runner swap but missed the lint one (recall 0.5 case).
+
+DEVIATION: .github/workflows/sast.yaml:17 semgrep runs on ubuntu-24.04-arm instead of the sanctioned x64 runner

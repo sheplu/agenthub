@@ -1,0 +1,45 @@
+name: Dependency Scan
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  osv-scan:
+    name: OSV Scan
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: OSV Scan
+        env:
+          OSV_VERSION: 2.5.0
+        run: |
+          set -euo pipefail
+          curl -sSLo osv-scanner "https://github.com/google/osv-scanner/releases/download/v${OSV_VERSION}/osv-scanner_linux_arm64"
+          chmod +x osv-scanner
+          ./osv-scanner --lockfile=package-lock.json
+
+  audit:
+    name: Audit
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Setup Node
+        uses: actions/setup-node@a1c52d2c570ee84cd1d1d1ff09d64d491e4d47c9 # v6.1.0
+        with:
+          node-version: 26
+          cache: npm
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+      - name: Audit dependencies
+        run: npm audit
