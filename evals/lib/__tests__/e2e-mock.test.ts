@@ -117,3 +117,35 @@ test("dry-run prints the expanded matrix without spawning anything", async () =>
   assert.ok(stdout.includes("18 cell(s)"), `9 fixtures x 2 runs, got: ${stdout.split("\n")[0]}`);
   assert.ok(stdout.includes("mock__default__compliant__r1"));
 });
+
+test("--help prints usage and exits 0", async () => {
+  const { stdout } = await execFileAsync(process.execPath, [benchScript, "--help"]);
+  assert.match(stdout, /usage: bench/);
+});
+
+test("running into a non-empty results dir is rejected", async () => {
+  const resultsDir = await mkdtemp(join(tmpdir(), "agenthub-bench-test-"));
+  try {
+    const run = [
+      benchScript,
+      "run",
+      "--harness",
+      "mock",
+      "--mock-dir",
+      mockDir,
+      "--fixture",
+      "compliant",
+      "--results-dir",
+      resultsDir,
+    ];
+    await execFileAsync(process.execPath, run);
+    // Stale cells from the first run must not silently mix into a later
+    // `bench score` of this dir.
+    await assert.rejects(
+      () => execFileAsync(process.execPath, run),
+      (error: Error & { stderr?: string }) => /not empty/.test(error.stderr ?? ""),
+    );
+  } finally {
+    await rm(resultsDir, { recursive: true, force: true });
+  }
+});

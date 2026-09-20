@@ -21,10 +21,13 @@ export interface ContractOutput {
 }
 
 // Tolerant of markdown decoration around the keywords (bullets, quotes,
-// bold/italic markers, backticks) — "**DEVIATION**: …" and "`NO DEVIATIONS`"
-// are compliant answers, not contract violations.
-const DEVIATION_RE = /^[\s>#*_`-]*DEVIATION[*_`]*:\s*(.+)$/gim;
-const NO_DEVIATIONS_RE = /^[\s>#*_`-]*NO DEVIATIONS[\s*_`.!]*$/im;
+// bold/italic markers, backticks, ordered-list numbering — the prompt numbers
+// its own instructions, so `1. DEVIATION: …` is a plausible answer too):
+// "**DEVIATION**: …" and "`NO DEVIATIONS`" are compliant answers, not
+// contract violations.
+const NUMBERING = /(?:\d+[.)][\s>]+)*/.source;
+const DEVIATION_RE = new RegExp(`^[\\s>#*_\`-]*${NUMBERING}DEVIATION[*_\`]*:\\s*(.+)$`, "gim");
+const NO_DEVIATIONS_RE = new RegExp(`^[\\s>#*_\`-]*${NUMBERING}NO DEVIATIONS[\\s*_\`.!]*$`, "im");
 
 export function extractContract(finalText: string): ContractOutput {
   const deviationLines = [...finalText.matchAll(DEVIATION_RE)]

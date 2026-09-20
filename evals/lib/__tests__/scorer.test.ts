@@ -40,6 +40,15 @@ test("markdown-decorated verdicts still satisfy the contract", () => {
 
   const boldColonInside = extractContract("**DEVIATION:** sast.yaml:5 wrong runner");
   assert.equal(boldColonInside.deviationLines.length, 1);
+
+  // ordered-list numbering: the prompt itself numbers its instructions, so
+  // `1. DEVIATION: …` is a plausible compliant answer, not a violation
+  assert.equal(extractContract("1. NO DEVIATIONS").noDeviations, true);
+  const numbered = extractContract("1. DEVIATION: quality-gates.yaml:23 checkout pinned by tag");
+  assert.equal(numbered.deviationLines.length, 1);
+  assert.match(numbered.deviationLines[0] as string, /checkout/);
+  const parenNumbered = extractContract("2) DEVIATION: sast.yaml:5 wrong runner");
+  assert.equal(parenNumbered.deviationLines.length, 1);
 });
 
 test("perfect recall and precision", () => {

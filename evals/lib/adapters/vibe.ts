@@ -12,6 +12,7 @@ import { probeVersion, type BuildCommandOptions, type HarnessAdapter, type Harne
  * Transcript (`--output json`): one JSON array of entries. Relevant:
  *   {type:"message", role:"assistant", content:[{type:"text", text}]}
  *   {type:"effect", detail:{toolName, input:{filePath|path|pattern}}}
+ * (pattern is deliberately not collected as a read — see collectPaths)
  */
 export const vibeAdapter: HarnessAdapter = {
   name: "vibe",
@@ -64,7 +65,9 @@ export const vibeAdapter: HarnessAdapter = {
     const collectPaths = (value: unknown): void => {
       if (typeof value !== "object" || value === null) return;
       for (const [key, val] of Object.entries(value as Record<string, unknown>)) {
-        if (typeof val === "string" && /^(file_?path|path|pattern|absolute_path)$/i.test(key)) {
+        // Path-like inputs only — a grep/glob *pattern* mentioning
+        // "skill/references/" is not evidence that a reference file was read.
+        if (typeof val === "string" && /^(file_?path|path|absolute_path)$/i.test(key)) {
           toolReads.push(val);
         } else if (typeof val === "object" && val !== null) {
           collectPaths(val);

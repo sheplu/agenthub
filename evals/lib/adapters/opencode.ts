@@ -13,6 +13,11 @@ import { probeVersion, type BuildCommandOptions, type HarnessAdapter, type Harne
  *   permission prompt;
  * - the runner's wall-clock timeout is the only hard cap.
  *
+ * `--dir` pins the session to the sandbox: opencode resolves its project
+ * directory on its own, and a real 1.18.31 run with only cwd set reviewed
+ * the host repository instead (wrong tree, sandbox opencode.json never
+ * applied) while still exiting 0 — silently invalid results.
+ *
  * Transcript: NDJSON events `{type, part}`. Relevant:
  *   {type:"text", part:{type:"text", text, messageID}}
  *   {type:"tool_use", part:{tool, state:{input:{filePath|path|pattern}}}}
@@ -41,7 +46,8 @@ export const opencodeAdapter: HarnessAdapter = {
   },
 
   buildCommand(opts: BuildCommandOptions): HarnessCommand {
-    const argv = ["opencode", "run", "--format", "json", "--auto"];
+    // --dir, not just cwd: see the adapter notes above.
+    const argv = ["opencode", "run", "--format", "json", "--auto", "--dir", opts.sandboxDir];
     if (opts.model !== null) argv.push("-m", opts.model);
     argv.push(opts.promptText);
     return { argv, cwd: opts.sandboxDir };
@@ -80,7 +86,9 @@ export const opencodeAdapter: HarnessAdapter = {
         sawToolInfo = true;
         const state = (part["state"] ?? {}) as Record<string, unknown>;
         const input = (state["input"] ?? {}) as Record<string, unknown>;
-        for (const key of ["filePath", "file_path", "path", "pattern"]) {
+        // Path-like inputs only — a grep/glob *pattern* mentioning
+        // "skill/references/" is not evidence that a reference file was read.
+        for (const key of ["filePath", "file_path", "path"]) {
           if (typeof input[key] === "string") toolReads.push(input[key]);
         }
       }

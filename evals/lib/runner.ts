@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
-import { mkdir, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { mkdir, readdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { HarnessAdapter } from "./adapters/types.ts";
 import { createSandbox, type Sandbox } from "./sandbox.ts";
@@ -28,8 +29,16 @@ export interface RunOptions {
 }
 
 export function cellId(spec: CellSpec): string {
+  // The model segment embeds a short hash of the raw model string: sanitizing
+  // alone is not injective (`vendor/model` and `vendor-model` both become
+  // `vendor-model`, `a:b` and `a_b` both `a_b`), and colliding IDs would make
+  // persisted cells overwrite each other. The null-model bucket is exempt:
+  // expandCells collapses every "default" request into it, so no real model
+  // can share it.
   const model = (spec.model ?? "default").replaceAll("/", "-").replaceAll(":", "_").replaceAll(/\s+/g, "-");
-  return `${spec.harness}__${model}__${spec.fixture}__r${spec.runIndex}`;
+  const fingerprint =
+    spec.model === null ? "" : `-${createHash("sha256").update(spec.model).digest("hex").slice(0, 6)}`;
+  return `${spec.harness}__${model}${fingerprint}__${spec.fixture}__r${spec.runIndex}`;
 }
 
 export function expandCells(opts: RunOptions, available: Set<string>): CellSpec[] {
@@ -252,6 +261,16 @@ class Limiter {
 }
 
 export async function runMatrix(opts: RunOptions): Promise<{ cells: CellResult[]; meta: RunMeta }> {
+  // A run into a used results dir would leave the previous run's cells
+  // behind: `bench score <dir>` later would pull them into the new report.
+  try {
+    const existing = await readdir(opts.resultsDir);
+    if (existing.length > 0) {
+      throw new Error(`results dir '${opts.resultsDir}' is not empty — use a fresh --results-dir`);
+    }
+  } catch (cause) {
+    if ((cause as NodeJS.ErrnoException).code !== "ENOENT") throw cause;
+  }
   await mkdir(join(opts.resultsDir, "cells"), { recursive: true });
 
   const available = new Set<string>();

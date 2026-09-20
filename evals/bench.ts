@@ -56,8 +56,12 @@ function positiveNumber(name: string, raw: string | number): number {
   return value;
 }
 
-function usage(): never {
+function printHelp(): void {
   console.log("usage: bench <run|score|list> — see evals/README.md");
+}
+
+function usage(): never {
+  printHelp();
   process.exit(2);
 }
 
@@ -165,7 +169,10 @@ async function commandList(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  if (flags.help) usage();
+  if (flags.help) {
+    printHelp(); // requested help is not an error — exit 0
+    return;
+  }
   await mkdir(suitesRoot, { recursive: true });
   switch (positionals[0]) {
     case "run":

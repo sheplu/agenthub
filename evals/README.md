@@ -79,9 +79,11 @@ pipeline: `npm test`.
 2. Author the `compliant` fixture by *following the skill* — it must be
    correct per the skill's own references, or precision measurements are
    meaningless.
-3. Derive each defect fixture from `compliant` with exactly one seeded
-   defect, and describe it in `expected.json` with loose regexes (models word
-   findings differently).
+3. Derive each defect fixture from `compliant` by seeding a small set of
+   known defects — a single defect per fixture is ideal for attribution, but
+   a couple is fine (`wrong-runner` here seeds two runner mismatches).
+   Describe every seeded defect in `expected.json` with loose regexes
+   (models word findings differently).
 4. Keep the output contract in `prompt.md` — the scorer only understands
    `DEVIATION:` lines and `NO DEVIATIONS`.
 
