@@ -1,3 +1,6 @@
+# Benchmark results (evals framework)
+evals/results/
+
 # Logs
 logs
 *.log

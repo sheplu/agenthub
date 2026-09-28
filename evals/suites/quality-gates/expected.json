@@ -1,0 +1,55 @@
+{
+  "compliant": [],
+  "tag-pinned-action": [
+    {
+      "key": "checkout-pinned-by-tag",
+      "patterns": ["quality-gates", "checkout", "pin|sha|tag|@v7"]
+    }
+  ],
+  "missing-cache": [
+    {
+      "key": "npm-cache-disabled",
+      "patterns": ["quality-gates", "cach"]
+    }
+  ],
+  "wrong-runner": [
+    {
+      "key": "semgrep-on-arm",
+      "patterns": ["sast", "runner|runs-on|arm|x64|ubuntu-24\\.04"]
+    },
+    {
+      "key": "lint-on-x64",
+      "patterns": ["quality-gates", "lint", "runner|runs-on|arm|x64|ubuntu-24\\.04"]
+    }
+  ],
+  "security-job-in-qg": [
+    {
+      "key": "osv-scan-in-wrong-file",
+      "patterns": ["osv", "quality-gates|dependency-scan|wrong (file|workflow)|belongs"]
+    }
+  ],
+  "unpinned-binary": [
+    {
+      "key": "binary-without-checksum",
+      "patterns": ["dependency-scan", "sha-?256|checksum|verif|unverified"]
+    }
+  ],
+  "no-size-budget": [
+    {
+      "key": "no-package-size-budget",
+      "patterns": ["quality-gates", "size|budget"]
+    }
+  ],
+  "no-thresholds": [
+    {
+      "key": "no-coverage-thresholds",
+      "patterns": ["threshold"]
+    }
+  ],
+  "coe-abuse": [
+    {
+      "key": "continue-on-error-on-gate",
+      "patterns": ["quality-gates", "continue-on-error"]
+    }
+  ]
+}

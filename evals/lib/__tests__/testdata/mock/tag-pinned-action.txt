@@ -1,0 +1,7 @@
+#TURNS: 7
+#COST: 0.05
+#MODEL: mock-1
+#READS: skill/SKILL.md, skill/references/conventions.md
+The review found one supply-chain issue.
+
+DEVIATION: .github/workflows/quality-gates.yaml:23 lint job checkout is tag-pinned (@v7) instead of a full commit SHA

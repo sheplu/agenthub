@@ -1,0 +1,19 @@
+{
+  "name": "agenthub",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Reusable agent skills, with a cross-harness benchmarking framework under evals/",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "bench": "node evals/bench.ts",
+    "check": "tsc --noEmit",
+    "test": "node --test evals/lib/__tests__/*.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.0"
+  }
+}
