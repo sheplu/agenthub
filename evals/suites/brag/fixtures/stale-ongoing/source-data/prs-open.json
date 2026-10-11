@@ -1,0 +1,10 @@
+[
+  {
+    "number": 150,
+    "title": "Add distributed tracing to auth service",
+    "url": "https://github.com/acme/platform/pull/150",
+    "isDraft": true,
+    "createdAt": "2026-10-10T09:00:00Z",
+    "labels": [{"name": "infrastructure"}, {"name": "observability"}]
+  }
+]
