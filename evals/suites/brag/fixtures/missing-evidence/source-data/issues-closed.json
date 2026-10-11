@@ -1,0 +1,18 @@
+[
+  {
+    "repository": {"name": "platform", "nameWithOwner": "acme/platform"},
+    "number": 89,
+    "title": "Payment gateway returns 500 on null response",
+    "url": "https://github.com/acme/platform/issues/89",
+    "closedAt": "2026-10-08T18:20:00Z",
+    "labels": [{"name": "bug"}, {"name": "payments"}]
+  },
+  {
+    "repository": {"name": "platform", "nameWithOwner": "acme/platform"},
+    "number": 92,
+    "title": "Express version pinned to vulnerable release",
+    "url": "https://github.com/acme/platform/issues/92",
+    "closedAt": "2026-10-09T15:30:00Z",
+    "labels": [{"name": "security"}, {"name": "dependencies"}]
+  }
+]

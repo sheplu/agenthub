@@ -1,0 +1,59 @@
+{
+  "compliant": [],
+  "fabricated-entry": [
+    {
+      "key": "redis-not-in-source",
+      "patterns": [
+        "brag\\.md",
+        "Redis|caching|session store",
+        "fabricat|no.*match|cannot.*trac|not found|no.*correspond|no.*source|no.*evidence|no.*record|invented|does not exist"
+      ]
+    }
+  ],
+  "missing-evidence": [
+    {
+      "key": "fix-missing-link",
+      "patterns": [
+        "brag\\.md",
+        "null response|payment gateway|#145",
+        "link|url|evidence|reference|missing|bracket"
+      ]
+    },
+    {
+      "key": "review-missing-link",
+      "patterns": [
+        "brag\\.md",
+        "rate limit|public API|#143",
+        "link|url|evidence|reference|missing|bracket"
+      ]
+    }
+  ],
+  "wrong-category": [
+    {
+      "key": "review-in-features",
+      "patterns": [
+        "brag\\.md",
+        "gRPC|user service|Migrate|#139",
+        "categor|belong|should be|misplac|wrong|Review|not.*Feature"
+      ]
+    },
+    {
+      "key": "upgrade-in-fixes",
+      "patterns": [
+        "brag\\.md",
+        "Express|upgrade|4\\.19|#148",
+        "categor|belong|should be|misplac|wrong|Infrastructure|dependen|not.*Fix"
+      ]
+    }
+  ],
+  "stale-ongoing": [
+    {
+      "key": "merged-pr-in-ongoing",
+      "patterns": [
+        "brag\\.md",
+        "null response|payment|#145",
+        "ongoing|complete|merge|closed|should.*move|already|not.*open|resolved"
+      ]
+    }
+  ]
+}
