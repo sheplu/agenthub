@@ -1,0 +1,32 @@
+[
+  {
+    "number": 142,
+    "title": "Add OAuth 2.1 token refresh handling",
+    "url": "https://github.com/acme/platform/pull/142",
+    "mergedAt": "2026-10-07T17:00:00Z",
+    "body": "Implements automatic token refresh with exponential backoff.\n\nCloses #87",
+    "additions": 312,
+    "deletions": 45,
+    "labels": [{"name": "feature"}, {"name": "auth"}]
+  },
+  {
+    "number": 145,
+    "title": "Fix null response handling in payment gateway",
+    "url": "https://github.com/acme/platform/pull/145",
+    "mergedAt": "2026-10-08T18:20:00Z",
+    "body": "Added null checks for payment gateway responses.\n\nFixes #89",
+    "additions": 48,
+    "deletions": 3,
+    "labels": [{"name": "bug"}, {"name": "payments"}]
+  },
+  {
+    "number": 148,
+    "title": "Upgrade Express to 4.19.2",
+    "url": "https://github.com/acme/platform/pull/148",
+    "mergedAt": "2026-10-09T15:30:00Z",
+    "body": "Addresses CVE-2026-1234.\n\nFixes #92",
+    "additions": 22,
+    "deletions": 22,
+    "labels": [{"name": "dependencies"}, {"name": "security"}]
+  }
+]
