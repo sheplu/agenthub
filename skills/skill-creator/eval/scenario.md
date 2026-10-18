@@ -11,10 +11,16 @@ inventing facts.
 - The agent under test has the `skill-creator` skill installed and works in a
   checkout of this repository — the five published skills and the git history
   give the recon step real material to find.
-- **Strip this `eval/` folder from the installed skill copy.** The persona
-  holds the hidden answers the intake interview must extract — an agent that
-  can read it invalidates the run. If the harness cannot strip it, the run is
-  valid only if the transcript shows the agent never read `eval/`.
+- The checkout is a disposable copy: `skills/changelog/` must not exist
+  before the run, and the tree is discarded afterwards — the run mutates it
+  (the scaffold, and any commit the finalize step makes), so runs are not
+  repeatable in the same checkout.
+- **Strip this `eval/` folder from the installed skill copy AND from the
+  repository checkout** — post-merge, the checkout's
+  `skills/skill-creator/eval/` holds the same answers. The persona holds the
+  hidden answers the intake interview must extract — an agent that can read
+  it invalidates the run. If the harness cannot strip them, the run is valid
+  only if the transcript shows the agent never read an `eval/` folder.
 - A driver (human or LLM) plays the user, answering strictly from
   [persona.md](persona.md). The driver never volunteers information that was
   not asked for.
@@ -38,8 +44,8 @@ The agent recognises a create-mode request. It recons the repo before asking
 anything — finding `pr-commit` as the domain-adjacent sibling — and presents
 pre-filled intake answers. It interviews in batched rounds, probing the vague
 format answer and surfacing the every-commit vs users-only contradiction. It
-proposes named inspiration candidates from at least two pools and reads only
-the ones the driver confirms. It scaffolds `skills/changelog/` per the house
+proposes named inspiration candidates from every reachable pool and reads
+only the ones the driver confirms. It scaffolds `skills/changelog/` per the house
 anatomy (references first, SKILL.md last), shows a passing validation
 checklist, then runs the dry runs on approved prompts — revising the files
 after each feedback item — and finalizes with the file tree. The scaffolded

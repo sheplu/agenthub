@@ -71,9 +71,10 @@ The driver answers the agent's questions **only** from this file. Rules:
 - Prompt approval: approve two of the three proposed prompts if they are
   realistic; replace the third with exactly: "prepare the changelog for the
   2.3.0 release."
-- Feedback after run 1: the simulated skill **invented a release date** — it
-  must read the date from the environment or ask, never guess. Request this
-  as a rule in the skill files.
+- Feedback after run 1: if the run guessed or **invented a release date**,
+  point it out; if it read the date from the environment, asked, or stopped
+  at the gap, acknowledge that instead. Either way, request that the skill
+  files state the rule explicitly: dates are read or asked, never guessed.
 - Feedback after run 2: breaking changes must always be listed first within
   a version entry, before the other categories. Request this as a rule in the
   skill files.

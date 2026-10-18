@@ -1,7 +1,8 @@
 # Skill Creator — Validation checklist
 
 The pass/fail gate for a scaffolded or updated skill. Run it before
-presenting a draft, and again after the final dry-run revision. The checks
+presenting a draft, and again after the final dry-run revision; show the
+user the outcome of the final pass when presenting. The checks
 enforce [skill-anatomy.md](skill-anatomy.md) — consult it for the reasoning
 behind any check. On a foreign repo where anatomy's portability detection
 found local conventions, substitute those for the house-specific rows and say
@@ -13,14 +14,15 @@ which rows were substituted.
 | --- | --- |
 | S1 | Directory name is kebab-case and equals the frontmatter `name`. |
 | S2 | Frontmatter has exactly two fields: `name` and `description` — nothing else. |
-| S3 | Description follows `<what it does> — use when <triggers>` and quotes at least two literal trigger phrases. |
-| S4 | SKILL.md has exactly the four sections, in order: title + intro, `## Core rules at a glance`, `## References`, `## How to use`. |
+| S3 | Description follows `<what it does> — use when <triggers>` and names concrete trigger situations; literal user phrases are quoted where the description uses them. |
+| S4 | SKILL.md has the sections in order: title + intro, `## Core rules at a glance`, `## References`, and — required for multi-mode skills — `## How to use`. |
 | S5 | The References section opens with the verbatim line `Read these on demand — do not guess details from the summary above:`. |
 | S6 | The references table is `\| File \| Read when \|` with relative markdown links. |
 | S7 | Table/file bijection: every reference file appears in the table, every table row links to an existing file, every link resolves. |
-| S8 | `references/` holds 2 to 4 files, kebab-case names. |
+| S8 | `references/` holds 2 to 4 top-level topic files, kebab-case names; variant subdirectories (one file per variant) sit outside the cap. |
 | S9 | SKILL.md is 52–88 lines by `wc -l`, frontmatter included. |
-| S10 | `## How to use` has one bullet per mode, each naming the reference(s) to read first. |
+| S10 | When present (required for multi-mode skills), `## How to use` has one bullet per mode, each naming the reference(s) to read first. |
+| S11 | The skill's top level holds only `SKILL.md`, `references/`, and optionally `eval/` — no README, scripts, assets, or stray files. |
 
 ## Content checks
 
@@ -30,7 +32,7 @@ which rows were substituted.
 | C2 | Every reference file starts with `# <Skill> — <Topic>` and a pointer paragraph naming sibling references where relevant. |
 | C3 | Enumerations are tables; procedures are numbered steps. |
 | C4 | The intro paragraph states the skill's relation to sibling skills (or that it has none). |
-| C5 | Every constraint in the files traces to a user-confirmed intake answer or a decision explicitly recorded as delegated — no invented rules. |
+| C5 | Every constraint in the files traces to a user-confirmed intake answer, a recon finding, a rule borrowed from user-confirmed inspiration, or a decision explicitly recorded as delegated — no invented rules. |
 | C6 | Update mode only: the diff is limited to the requested change — no rewrites of untouched sections. |
 
 ## Process checks
@@ -39,10 +41,12 @@ which rows were substituted.
 | --- | --- |
 | P1 | Recon (conversation + repo) ran before the first intake question, and its findings were presented as pre-filled answers. |
 | P2 | Inspiration candidates were proposed and user-confirmed before being read in depth. |
-| P3 | Dry runs were executed per the protocol and every feedback item is visible in the final files. |
+| P3 | Final pass only: dry runs were executed per the protocol and every feedback item is visible in the final files. |
 
 ## On failure
 
 Fix the failing check, then re-run the **entire** checklist — a fix can break
 a convention elsewhere (line budget, bijection). Never present a skill with a
-failing check, and never report "mostly passing".
+failing check, and never report "mostly passing". In update mode, failures
+that pre-date the requested change are reported to the user instead of fixed
+— they do not block presenting the update (see the workflow's update rules).

@@ -10,7 +10,7 @@ the order in which to produce these pieces.
 ```
 skills/<name>/
   SKILL.md              required — the routing summary
-  references/           required — 2 to 4 topic files, kebab-case names
+  references/           required — 2 to 4 top-level topic files (see below)
     <topic>.md
   eval/                 optional — interactive eval (see below)
     persona.md
@@ -42,8 +42,9 @@ skill — it is a trigger, not a synopsis. Pattern:
 
 - One to two sentences. Name both what the skill does and the concrete
   situations and phrases that should fire it.
-- Quote the literal phrases users say ("review this PR", "update the
-  changelog") — undertriggering is the common failure, so be a little pushy.
+- Name the concrete situations, and quote the literal phrases users say
+  ("review this PR", "update the changelog") where natural — undertriggering
+  is the common failure, so be a little pushy.
 
 | Verdict | Example |
 | --- | --- |
@@ -52,8 +53,9 @@ skill — it is a trigger, not a synopsis. Pattern:
 
 ## SKILL.md shape
 
-Exactly four sections, in this order. The quoted strings are literal — other
-skills and evals match on them.
+The sections below, in this order — `## How to use` is required for skills
+with more than one mode and may be omitted by single-mode skills. The quoted
+strings are literal — other skills and evals match on them.
 
 1. `# <Title>` + a short intro paragraph: what the skill is, its scope, and
    its relation to sibling skills in the catalog.
@@ -67,7 +69,8 @@ skills and evals match on them.
    links into `references/`. Every reference file appears in the table, and
    every table row points at an existing file — a bijection.
 4. `## How to use` — short bullets, one per mode, each naming which
-   reference(s) to read first.
+   reference(s) to read first. Required when the skill has more than one
+   mode.
 
 **Line budget: 52–88 lines** (`wc -l`), frontmatter included. Approaching the
 ceiling means a detail belongs in a reference, not that the budget should
@@ -82,8 +85,10 @@ summary copy will win by being loaded first.
 
 ## Reference file conventions
 
-- 2 to 4 files, kebab-case names describing the topic
-  (`commit-rules.md`, `review-checklist.md`).
+- 2 to 4 top-level files, kebab-case names describing the topic
+  (`commit-rules.md`, `review-checklist.md`). A variant family (per-runtime,
+  per-cloud) nests as a subdirectory under its topic — one file per variant
+  (`runtimes/nodejs.md`) — outside the cap.
 - Each starts with `# <Skill> — <Topic>` and a pointer paragraph: what the
   file covers and which sibling references to consult alongside it.
 - Enumerations are tables; procedures are numbered steps; checklists are

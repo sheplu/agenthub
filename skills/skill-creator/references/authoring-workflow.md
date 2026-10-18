@@ -37,7 +37,9 @@ gate in [validation-checklist.md](validation-checklist.md).
 
 2. **Intake interview.** Batched, numbered rounds — never one-question
    ping-pong. Present confirmed answers for a quick yes, inferred answers
-   with your recommendation, and ask only the unknowns. Vague answers
+   with your recommendation, and ask the unknowns — each question carries a
+   recommended answer, or an explicit "no recommendation" when nothing
+   grounds one. Vague answers
    ("make it professional", "the usual") are prompts to probe — push for a
    named standard, a concrete example, a boundary. Contradictory answers are
    surfaced with both statements together, never silently resolved.
@@ -78,10 +80,12 @@ gate in [validation-checklist.md](validation-checklist.md).
 
 5. **Validate.** Run every check in
    [validation-checklist.md](validation-checklist.md); fix and re-run until
-   clean. Never present a draft with a failing check.
+   clean, and show the user the outcome of the final pass. Never present a
+   draft with a failing check.
 
 6. **Dry runs.** Hand off to [dry-run-protocol.md](dry-run-protocol.md) —
-   2–3 simulated runs with user feedback and revisions between them.
+   simulated runs with user feedback and revisions between them; the budget
+   and mechanics live there.
 
 7. **Finalize.** Present the final file tree and a one-paragraph summary of
    what changed since the first draft. Offer — do not force — an `eval/`
@@ -104,6 +108,8 @@ gate in [validation-checklist.md](validation-checklist.md).
 5. **Re-validate the whole skill** against
    [validation-checklist.md](validation-checklist.md) — an edit can break a
    convention far from where it landed (line budget, table bijection).
+   Failures that pre-date the requested change are reported to the user,
+   never fixed unasked — only failures the edit introduced block presenting.
 6. **Dry-run when behaviour changed**: at least one simulated run per
    [dry-run-protocol.md](dry-run-protocol.md). Pure wording fixes may skip
    this — say so explicitly.

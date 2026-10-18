@@ -27,20 +27,20 @@ done until it has been validated and dry-run with the user.
   resolved. The question catalog lives in `authoring-workflow.md`.
 - **Inspiration is confirmed, never assumed**: propose candidates — skills in
   the repo, the public anthropics/skills catalog, the user's own projects —
-  and read only the 2–3 the user confirms, before drafting anything.
+  and read only the candidates the user confirms, before drafting anything.
 - **Anatomy is law**: exact frontmatter, trigger-style description, the
-  four-section SKILL.md shape, 2–4 reference files, a hard line budget. The
-  full spec lives in `skill-anatomy.md` — never scaffold from memory of this
-  summary.
+  fixed SKILL.md section shape, a capped reference set, a hard line budget.
+  The full spec lives in `skill-anatomy.md` — never scaffold from memory of
+  this summary.
 - **Summary defers, never restates**: every number, enumeration, and
   procedure lives in a reference file; SKILL.md carries only pointers. A
   detail stated in both places is a defect.
 - **Validate before presenting**: run every check in
   `validation-checklist.md`; a failing check means fix and re-validate —
   never present "mostly done".
-- **Dry runs before done**: 2–3 simulated runs on user-approved test prompts,
-  feedback after each, the skill revised between runs — per
-  `dry-run-protocol.md`. A skill is unfinished until it survives its dry
+- **Dry runs before done**: simulated runs on user-approved test prompts,
+  feedback after each, the skill revised between runs — budget and mechanics
+  per `dry-run-protocol.md`. A skill is unfinished until it survives its dry
   runs.
 - **Portable by detection**: this catalog's house style is the default; in a
   repo with its own skill conventions, detect and follow those instead —
@@ -58,7 +58,7 @@ Read these on demand — do not guess details from the summary above:
 
 | File | Read when |
 | --- | --- |
-| [references/skill-anatomy.md](references/skill-anatomy.md) | Always, before drafting or editing any SKILL.md or reference file — frontmatter rules, description-as-trigger pattern, the four-section shape, reference conventions, line budget, portability detection. |
+| [references/skill-anatomy.md](references/skill-anatomy.md) | Always, before drafting or editing any SKILL.md or reference file — frontmatter rules, description-as-trigger pattern, the section shape, reference conventions, line budget, portability detection. |
 | [references/authoring-workflow.md](references/authoring-workflow.md) | Starting a create or update run — recon steps, the intake question catalog, inspiration proposal and confirmation, scaffolding order, update-mode rules. |
 | [references/dry-run-protocol.md](references/dry-run-protocol.md) | After a draft exists — proposing test prompts, role-playing the new skill, collecting feedback, revising between runs. |
 | [references/validation-checklist.md](references/validation-checklist.md) | Before presenting a scaffolded or updated skill, and again after the final dry-run revision — the pass/fail checks. |
