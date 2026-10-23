@@ -1,9 +1,11 @@
 # Skill Creator — Skill anatomy
 
-The canonical spec for what a skill in this catalog looks like. Every rule
-here is checkable; [validation-checklist.md](validation-checklist.md) is its
-enforcement form. Consult [authoring-workflow.md](authoring-workflow.md) for
-the order in which to produce these pieces.
+The canonical spec for what a skill in this catalog looks like — where a
+published sibling diverges, this spec, not the sibling, is the rule. The
+checkable rules here are enforced by
+[validation-checklist.md](validation-checklist.md), its enforcement form.
+Consult [authoring-workflow.md](authoring-workflow.md) for the order in which
+to produce these pieces.
 
 ## Directory layout
 
@@ -40,15 +42,17 @@ skill — it is a trigger, not a synopsis. Pattern:
 <what it does> — use when <trigger conditions, including quoted phrases>.
 ```
 
-- One to two sentences. Name both what the skill does and the concrete
-  situations and phrases that should fire it.
-- Name the concrete situations, and quote the literal phrases users say
-  ("review this PR", "update the changelog") where natural — undertriggering
-  is the common failure, so be a little pushy.
+- One to two sentences — the `use when` clause may open its own sentence, as
+  in the Good example below. Name what the skill does and the concrete
+  situations that fire it, quoting the literal phrases users say ("review
+  this PR", "update the changelog") where natural — undertriggering is the
+  common failure, so be a little pushy.
+- Keep the value YAML-safe: don't open the description with a quoted phrase,
+  and no `: ` inside the unquoted scalar.
 
 | Verdict | Example |
 | --- | --- |
-| Good | `Review or create a repository's CI gate workflows — quality gates, SAST, dependency scanning. Use when setting up CI, reviewing a workflow, or auditing a PR that touches CI configuration.` |
+| Good | `Review or create a repository's CI gate workflows — quality gates, SAST, dependency scanning. Use when setting up CI, reviewing a workflow, or auditing a PR that touches CI configuration.` (the `quality-gates` description) |
 | Bad | `Helps with API specs.` — no trigger conditions, no phrases, no scope; an agent cannot tell when to load it. |
 
 ## SKILL.md shape
@@ -59,7 +63,8 @@ strings are literal — other skills and evals match on them.
 
 1. `# <Title>` + a short intro paragraph: what the skill is, its scope, and
    its relation to sibling skills in the catalog.
-2. `## Core rules at a glance` — bold-keyword bullets. Each bullet states a
+2. `## Core rules at a glance` — bullets, bold keywords where they aid
+   scanning, optionally grouped under `###` subheadings. Each bullet states a
    rule and, where detail exists, points at the reference file holding it with
    deferral language ("exact limits live in `x.md`; do not restate them from
    this summary", "never guess them from this summary").
@@ -72,16 +77,18 @@ strings are literal — other skills and evals match on them.
    reference(s) to read first. Required when the skill has more than one
    mode.
 
-**Line budget: 52–88 lines** (`wc -l`), frontmatter included. Approaching the
-ceiling means a detail belongs in a reference, not that the budget should
-stretch.
+**Line budget: 52–88 lines inclusive** (`wc -l` — keep the trailing newline
+or the count drops), frontmatter included. Approaching the ceiling means a
+detail belongs in a reference, not that the budget should stretch; the floor
+guards against a summary too thin to route by.
 
 ## Summary vs reference split
 
 Every number, threshold, enumeration, template, and procedure lives in exactly
-one reference file. SKILL.md carries only bold-keyword pointers to it. A
-detail stated in both places is a defect: the copies will drift, and the
-summary copy will win by being loaded first.
+one reference file — the validation checklist, as this spec's enforcement
+form, is the one sanctioned restatement. SKILL.md carries only bold-keyword
+pointers. A detail stated in both places is a defect: the copies will drift,
+and the summary copy will win by being loaded first.
 
 ## Reference file conventions
 
@@ -92,7 +99,7 @@ summary copy will win by being loaded first.
 - Each starts with `# <Skill> — <Topic>` and a pointer paragraph: what the
   file covers and which sibling references to consult alongside it.
 - Enumerations are tables; procedures are numbered steps; checklists are
-  pass/fail tables.
+  pass/fail tables or checkbox lists.
 - A file needed by more than one mode is one file — never duplicated per
   mode.
 
@@ -111,9 +118,10 @@ message verbatim, round budgets, expected behaviour), `persona.md` (the
 driver's hidden knowledge: facts revealed only when asked, first vs probed
 answers, scripted feedback), and `rubric.md` (pass/fail must/should checks
 over the transcript and the produced artifact). The scenario must instruct
-stripping `eval/` from the installed skill copy — an agent that can read the
-persona invalidates the run. Deterministic, output-contract skills use the
-`evals/suites/` benchmark framework instead (see `evals/README.md`).
+stripping `eval/` from the installed skill copy and the eval checkout — an
+agent that can read the persona invalidates the run. Deterministic,
+output-contract skills use the `evals/suites/` benchmark framework instead
+(see `evals/README.md`).
 
 ## Portability detection
 

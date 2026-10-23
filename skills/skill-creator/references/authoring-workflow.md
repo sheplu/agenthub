@@ -54,7 +54,9 @@ gate in [validation-checklist.md](validation-checklist.md).
    | References | What detail (formats, catalogs, procedures) will the references need to hold? | The reference file list is sketchable. |
 
 3. **Inspiration.** Propose named candidates from three pools, then read only
-   what the user confirms — never read in depth on your own initiative:
+   what the user confirms — never read a candidate in depth as inspiration on
+   your own initiative (recon and portability-detection reads serve a
+   different job and are not gated):
    - skills already in the target repo or this catalog;
    - the public [anthropics/skills](https://github.com/anthropics/skills)
      catalog;
@@ -120,7 +122,8 @@ gate in [validation-checklist.md](validation-checklist.md).
   public docs — is the author's job to look up. Only judgment calls,
   preferences, and domain knowledge go to the user.
 - **Delegated decisions are recorded**: when the user says "you decide",
-  decide, state the reasoning, and mark the decision as delegated in the
-  draft.
+  decide, state the reasoning, and record the delegation visibly — in the
+  finalize summary, or in the draft where the target repo's style allows an
+  authoring note.
 - **Plain-text mechanics**: the interview and the dry runs happen in ordinary
   markdown messages — no harness-specific question or form tools.

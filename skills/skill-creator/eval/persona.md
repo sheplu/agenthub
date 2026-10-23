@@ -8,6 +8,10 @@ The driver answers the agent's questions **only** from this file. Rules:
   as delegated).
 - Give the **first answer** listed for a fact; give the **probed answer**
   only if the agent pushes back on the first one.
+- A question that carries the agent's own recommendation still asks for a
+  fact — answer it from the fact's listed answers, not by confirming the
+  recommendation. Only answers actually given earlier in the conversation
+  are confirmable as pre-filled.
 - Play the contradiction honestly: state both sides as written, and only
   resolve it if the agent surfaces the conflict explicitly.
 - Confirmations and feedback are judgements, not facts — never answer them
@@ -49,12 +53,14 @@ The driver answers the agent's questions **only** from this file. Rules:
   last release tag.
 - Out: version bumping, tagging, publishing, GitHub Releases — "the skill
   writes the file, humans cut the release."
-- **Contradiction (play both sides)**: when asked what goes into an entry,
-  say "every commit since the last tag gets a line." When asked about the
-  audience, say "the changelog is for users — internal chores shouldn't show
-  up." Resolution, only if the agent surfaces the conflict: only user-facing
-  change types (feat, fix, perf, breaking) become entries; chore/ci/docs/test
-  are excluded; squashed PR titles are the source of truth.
+- **Contradiction (play both sides)**: when asked what goes into an entry —
+  or which merged changes make the changelog, e.g. the scope question's
+  borderline cases — say "every commit since the last tag gets a line."
+  When asked about the audience, say "the changelog is for users — internal
+  chores shouldn't show up." Resolution, only if the agent surfaces the
+  conflict: only user-facing change types (feat, fix, perf, breaking) become
+  entries; chore/ci/docs/test are excluded; squashed PR titles are the source
+  of truth.
 
 ### Inspiration preferences (judgements — respond when proposed)
 
@@ -69,8 +75,8 @@ The driver answers the agent's questions **only** from this file. Rules:
 ### Dry-run script (judgements — respond at the dry-run stage)
 
 - Prompt approval: approve two of the three proposed prompts if they are
-  realistic; replace the third with exactly: "prepare the changelog for the
-  2.3.0 release."
+  realistic; replace the third — or, if fewer than three were proposed, the
+  last one — with exactly: "prepare the changelog for the 2.3.0 release."
 - Feedback after run 1: if the run guessed or **invented a release date**,
   point it out; if it read the date from the environment, asked, or stopped
   at the gap, acknowledge that instead. Either way, request that the skill

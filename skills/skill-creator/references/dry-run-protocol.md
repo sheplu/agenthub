@@ -14,10 +14,11 @@ conversation.
 
 ## Procedure
 
-1. **Propose test prompts.** Offer 2–3 realistic prompts — the kind of thing
+1. **Propose test prompts.** Offer 3 realistic prompts — the kind of thing
    a real user would type — together covering distinct triggers and every
-   mode the skill has. The user approves, replaces, or adds prompts; run only
-   approved ones.
+   mode the skill has; each run needs its own approved prompt, so three keep
+   the full budget runnable. The user approves, replaces, or adds prompts;
+   run only approved ones.
 
 2. **Run each dry run in-conversation.** Announce it with a visible boundary:
 

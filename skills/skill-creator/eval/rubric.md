@@ -13,7 +13,7 @@ not blocking.**
 | R3 | must | Intake questions were asked in numbered, batched rounds — each carrying a recommended answer or an explicit "no recommendation" — not one-question-at-a-time ping-pong — and covered purpose, triggers, and scope. |
 | R4 | must | The vague answer ("just make it look professional") was probed and the Keep a Changelog 1.1.0 format with its categories reached the scaffolded files — no "professional-looking" hand-waving in the artifact. |
 | R5 | must | The contradiction (every-commit vs users-only) was surfaced explicitly — both statements quoted or restated together — and its resolution (user-facing types only, squashed PR titles) recorded. |
-| R6 | must | Inspiration was confirmed, not assumed: named candidates with reasons and a recommended pick were proposed from every reachable pool (offline runs grade on the repo pool alone), the driver's confirmation was obtained BEFORE any candidate was read beyond its name and description, and only confirmed candidates were read. |
+| R6 | must | Inspiration was confirmed, not assumed: named candidates with reasons and a recommended pick were proposed from every pool in which the agent could name one (a pool with no reachable or nameable candidate is skipped with a note; offline runs grade on locally available pools alone), the driver's confirmation was obtained BEFORE any candidate was read as inspiration beyond its name and description — recon reads of repo skills per R1 are exempt — and only confirmed candidates were read as inspiration. |
 | R7 | must | Three dry runs were executed in-conversation on driver-approved prompts, each announced with a visible boundary and followed by a feedback request — the persona scripts feedback after runs 1 and 2, so finishing on a clean run requires the third; stopping earlier fails this check. |
 | R8 | must | Each dry-run feedback item (no invented release dates; breaking changes first) produced a visible revision to the skill files before the next run. |
 | R9 | must | No files were written and no state-changing commands were run inside a dry-run simulation — simulated outputs appear inline only. |
@@ -27,18 +27,18 @@ not blocking.**
 | --- | --- | --- |
 | A1 | must | The scaffold exists at `skills/changelog/` with a kebab-case directory name equal to the frontmatter `name`. |
 | A2 | must | Frontmatter has exactly two fields: `name` and `description`. |
-| A3 | must | The description follows `<what it does> — use when <triggers>` and quotes at least two persona trigger phrases. |
-| A4 | must | SKILL.md has the four sections in order, the verbatim line `Read these on demand — do not guess details from the summary above:`, a `\| File \| Read when \|` table, and is 52–88 lines by `wc -l`. |
-| A5 | must | 2–4 reference files, each starting `# Changelog — <Topic>` with a pointer paragraph; table/file bijection holds. |
+| A3 | must | The description follows `<what it does> — use when <triggers>` (the `use when` clause may open its own sentence) and works in at least two persona trigger phrases, quoted where used. |
+| A4 | must | SKILL.md has the sections in order — title + intro, core rules, references, plus `## How to use` when the skill has more than one mode — the verbatim line `Read these on demand — do not guess details from the summary above:`, a two-column `File` / `Read when` references table, and is 52–88 lines by `wc -l`. |
+| A5 | must | 2 to 4 reference files, each starting `# Changelog — <Topic>` with a pointer paragraph; table/file bijection holds. |
 | A6 | must | The Keep a Changelog format details live in a reference file only — SKILL.md points at them without restating headings or category lists. |
 | A7 | must | Scope boundaries are present: release automation (bump/tag/publish) out of scope, and the non-overlap with `pr-commit` stated. |
 | A8 | must | Both dry-run feedback items are present in the final files: dates read or asked, never guessed; breaking changes listed first within a version. |
-| A9 | must | **No invented facts**: every rule in the scaffold traces to a persona answer, a recon finding, a rule borrowed from driver-confirmed inspiration, or a decision explicitly recorded as delegated. Any concrete claim absent from all four is a fail. |
-| A10 | should | Delegated decisions ("I don't know, you decide" answers) are recorded with the agent's reasoning. |
+| A9 | must | **No invented facts**: every rule in the scaffold traces to a persona answer, a recon finding, a rule borrowed from driver-confirmed inspiration, a fact looked up from public docs per the workflow's facts-vs-decisions rule, or a decision explicitly recorded as delegated. Any concrete claim absent from all five is a fail. |
+| A10 | should | Delegated decisions ("I don't know, you decide" answers) are recorded with the agent's reasoning — in the artifact or the finalize summary. |
 
 ## Scoring
 
-- **Pass**: all 19 "must" checks pass (R1–R10, A1–A9).
+- **Pass**: every "must" check passes (R1–R10, A1–A9).
 - Persona facts referenced by a "must" check are reachable through the
   skill's recon and intake catalog — a run that never asked about them fails
   those checks.

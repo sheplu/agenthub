@@ -21,13 +21,13 @@ done until it has been validated and dry-run with the user.
   demonstrated, tools used, corrections made) and the target repo (git
   history, existing skills, domain files) to pre-fill intake answers —
   present them for confirmation, never ask cold what recon could answer.
-- **Intake in rounds**: batched, numbered questions covering purpose,
-  triggers, and scope, each with a recommended answer. Vague answers are
-  probed, never recorded; contradictions are surfaced, never silently
-  resolved. The question catalog lives in `authoring-workflow.md`.
-- **Inspiration is confirmed, never assumed**: propose candidates — skills in
-  the repo, the public anthropics/skills catalog, the user's own projects —
-  and read only the candidates the user confirms, before drafting anything.
+- **Intake in rounds**: batched, numbered questions, each with a recommended
+  answer. Vague answers are probed, never recorded; contradictions are
+  surfaced, never silently resolved. The question catalog lives in
+  `authoring-workflow.md`.
+- **Inspiration is confirmed, never assumed**: propose named candidates from
+  the pools in `authoring-workflow.md` and read only those the user confirms,
+  before drafting anything.
 - **Anatomy is law**: exact frontmatter, trigger-style description, the
   fixed SKILL.md section shape, a capped reference set, a hard line budget.
   The full spec lives in `skill-anatomy.md` — never scaffold from memory of
@@ -45,9 +45,9 @@ done until it has been validated and dry-run with the user.
 - **Portable by detection**: this catalog's house style is the default; in a
   repo with its own skill conventions, detect and follow those instead —
   house style fills gaps, it never overrules a local pattern.
-- **Plain-text mechanics only**: the interview and the dry runs happen in
-  ordinary markdown messages — no harness-specific question or form tools,
-  and a dry run never writes files.
+- **Plain-text mechanics only**: the interview and the dry runs are ordinary
+  markdown exchanges, and a dry run never mutates anything — mechanics live
+  in `authoring-workflow.md` and `dry-run-protocol.md`.
 
 The exact spec, question catalog, protocol, and checks live in the reference
 files below — never guess details from this summary.
@@ -66,8 +66,8 @@ Read these on demand — do not guess details from the summary above:
 ## How to use
 
 - **Creating a skill**: read `authoring-workflow.md`; recon the conversation
-  and repo; interview in rounds; confirm and read inspiration; scaffold per
-  `skill-anatomy.md` (references first, SKILL.md last); validate per
+  and repo; interview in rounds; confirm and read inspiration; scaffold in
+  its step order per `skill-anatomy.md`; validate per
   `validation-checklist.md`; dry-run per `dry-run-protocol.md`; finalize.
 - **Updating a skill**: read the update section of `authoring-workflow.md`
   plus `skill-anatomy.md`; read the existing skill fully; apply only the
