@@ -42,7 +42,9 @@ gate in [validation-checklist.md](validation-checklist.md).
    grounds one. Vague answers
    ("make it professional", "the usual") are prompts to probe — push for a
    named standard, a concrete example, a boundary. Contradictory answers are
-   surfaced with both statements together, never silently resolved.
+   surfaced with both statements together, never silently resolved. A full
+   intake typically resolves in 2–4 batched rounds — needing more usually
+   means the batches are too small.
 
    | Area | Questions | Resolved when |
    | --- | --- | --- |
@@ -63,10 +65,11 @@ gate in [validation-checklist.md](validation-checklist.md).
    - the user's own projects — sibling repos on disk or on their GitHub —
      that touch the domain.
 
-   Offer 2–3 per relevant pool with a one-line reason each and mark a
-   recommended pick; the user confirms which 2–3 total to use. Read the confirmed ones and note what to borrow
-   (structure, rules, wording) and what to reject. If a remote pool is
-   unreachable, say so and proceed with local candidates.
+   Offer 2–3 per pool with a one-line reason each and mark a recommended
+   pick; a pool with no reachable or nameable candidate is skipped with a
+   note saying so. The user confirms which 2–3 total to use. Read the
+   confirmed ones and note what to borrow (structure, rules, wording) and
+   what to reject.
 
 4. **Scaffold.** The scaffold is the skill's own files — SKILL.md and its
    references, pure instructions — never application code. It lands where the
@@ -102,17 +105,16 @@ gate in [validation-checklist.md](validation-checklist.md).
    and what the request does *not* ask for. An empty diff — the request is
    already satisfied — is a finding to report, not a prompt to invent
    changes.
-3. **Classify the change**: trigger wording, a new rule, a new reference
-   file, a restructure. The class decides where the edit lands.
-4. **Apply minimally — no scope creep.** Touch nothing the request does not
-   require. New detail goes into a reference; the summary gets at most a new
-   pointer bullet. Rewrites of untouched sections are defects, not polish.
-5. **Re-validate the whole skill** against
+3. **Apply minimally — no scope creep.** Decide where the edit lands
+   (a reference for new detail, at most a new pointer bullet in the summary),
+   then touch nothing the request does not require. Rewrites of untouched
+   sections are defects, not polish.
+4. **Re-validate the whole skill** against
    [validation-checklist.md](validation-checklist.md) — an edit can break a
    convention far from where it landed (line budget, table bijection).
    Failures that pre-date the requested change are reported to the user,
    never fixed unasked — only failures the edit introduced block presenting.
-6. **Dry-run when behaviour changed**: at least one simulated run per
+5. **Dry-run when behaviour changed**: at least one simulated run per
    [dry-run-protocol.md](dry-run-protocol.md). Pure wording fixes may skip
    this — say so explicitly.
 

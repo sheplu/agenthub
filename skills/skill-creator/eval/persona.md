@@ -76,7 +76,7 @@ The driver answers the agent's questions **only** from this file. Rules:
 
 - Prompt approval: approve two of the three proposed prompts if they are
   realistic; replace the third — or, if fewer than three were proposed, the
-  last one — with exactly: "prepare the changelog for the 2.3.0 release."
+  last one — with exactly: "prepare the changelog for the 2.3.0 release".
 - Feedback after run 1: if the run guessed or **invented a release date**,
   point it out; if it read the date from the environment, asked, or stopped
   at the gap, acknowledge that instead. Either way, request that the skill

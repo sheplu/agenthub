@@ -54,6 +54,6 @@ conversation.
   to the interview, not into a fourth run.
 - Each run uses a different approved prompt — re-running the same prompt
   tests the fix, not the skill.
-- After the final revision, re-run
-  [validation-checklist.md](validation-checklist.md) — feedback edits break
-  conventions as easily as any other edit.
+- After the last run (and any revision it triggered), re-run
+  [validation-checklist.md](validation-checklist.md) before presenting —
+  feedback edits break conventions as easily as any other edit.

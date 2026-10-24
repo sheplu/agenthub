@@ -1,10 +1,12 @@
 # Skill Creator — Validation checklist
 
 The pass/fail gate for a scaffolded or updated skill. Run it before
-presenting a draft, and again after the final dry-run revision; show the
-user the outcome of the final pass when presenting. The checks
-enforce [skill-anatomy.md](skill-anatomy.md) — consult it for the reasoning
-behind any check. On a foreign repo where anatomy's portability detection
+presenting a draft, and again when presenting, after the dry runs have
+finished; show the user the outcome of that final pass. The structure and
+content checks enforce [skill-anatomy.md](skill-anatomy.md); the process
+checks enforce [authoring-workflow.md](authoring-workflow.md) and
+[dry-run-protocol.md](dry-run-protocol.md) — consult those files for the
+reasoning behind a check. On a foreign repo where anatomy's portability detection
 found local conventions, substitute those for the house-specific rows and say
 which rows were substituted.
 
@@ -23,13 +25,13 @@ which rows were substituted.
 | S9 | SKILL.md is 52–88 lines by `wc -l`, frontmatter included. |
 | S10 | When present (required for multi-mode skills), `## How to use` has one bullet per mode, each naming the reference(s) to read first. |
 | S11 | The skill's top level holds only `SKILL.md`, `references/`, and optionally `eval/` — no README, scripts, assets, or stray files. |
-| S12 | When `eval/` exists: it holds exactly `scenario.md`, `persona.md`, and `rubric.md`, and the scenario instructs stripping `eval/` from installed copies and the eval checkout. |
+| S12 | When `eval/` exists: it holds exactly `scenario.md`, `persona.md`, and `rubric.md`, and the scenario makes the answer key unreachable — stripped from installed copies and the eval checkout, with answers recovered from git history invalidating the run. |
 
 ## Content checks
 
 | # | Check |
 | --- | --- |
-| C1 | No number, enumeration, template, or procedure that lives in a reference is restated in SKILL.md or duplicated across reference files (one home per detail; a file shared by modes stays one file) — the summary only points. |
+| C1 | No number, enumeration, template, or procedure that lives in a reference is restated in SKILL.md or duplicated across reference files (one home per detail — this checklist's rows are the one sanctioned restatement of the rules they enforce; a file shared by modes stays one file) — the summary only points. |
 | C2 | Every reference file starts with `# <Skill> — <Topic>` and a pointer paragraph naming sibling references where relevant. |
 | C3 | Enumerations are tables; procedures are numbered steps; checklists are pass/fail tables or checkbox lists. |
 | C4 | The intro paragraph states the skill's relation to the sibling skills its scope borders (nothing is required when none borders). |
@@ -42,13 +44,12 @@ which rows were substituted.
 | --- | --- |
 | P1 | Create mode only: recon (conversation + repo) ran before the first intake question, and its findings — or an explicitly empty sheet — were presented as pre-filled answers. |
 | P2 | Create mode only: inspiration candidates were proposed and user-confirmed before being read in depth as inspiration — recon and portability-detection reads are exempt. |
-| P3 | Final pass only: dry runs were executed per the protocol — when the mode required them (update mode may skip them for pure wording fixes) — and every feedback item is visible in the final files. |
+| P3 | At presentation only: dry runs were executed per the protocol — when the mode required them (update mode may skip them for pure wording fixes, saying so explicitly) — and every feedback item is visible in the final files. |
 
 ## On failure
 
 Fix the failing check, then re-run the **entire** checklist — a fix can break
 a convention elsewhere (line budget, bijection). Never present a skill with a
 failing check, and never report "mostly passing". In update mode, failures
-that pre-date the requested change follow the workflow's update rules:
-reported to the user, never fixed unasked, and they do not block presenting
-the update.
+that pre-date the requested change follow the workflow's update rules —
+reported, never fixed unasked, not blocking.

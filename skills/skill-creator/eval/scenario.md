@@ -14,17 +14,20 @@ inventing facts.
 - The checkout is a disposable copy: `skills/changelog/` must not exist
   before the run, and the tree is discarded afterwards — the run mutates it
   (the scaffold, and any commit the finalize step makes — committing is
-  optional and ungraded; a sandbox that cannot sign commits skips it per
-  `pr-commit`'s stop rule), so runs are not repeatable in the same checkout.
+  optional and ungraded; a sandbox that cannot sign triggers `pr-commit`'s
+  stop-and-ask rule, which here resolves to not committing), so runs are not
+  repeatable in the same checkout.
 - **Strip this `eval/` folder from the installed skill copy AND from the
   repository checkout** — post-merge, the checkout's
   `skills/skill-creator/eval/` holds the same answers. The persona holds the
   hidden answers the intake interview must extract — an agent that can read
   it invalidates the run. Stripping the working tree does not strip git
   history, so a run whose transcript shows eval content recovered from
-  history (`git log -p`, `git show`) is equally invalid. If the harness
-  cannot strip them, the run is valid only if the transcript shows the agent
-  never read an `eval/` folder or its content.
+  history (`git log -p`, `git show`) is equally invalid — prefer a
+  history-sanitized checkout (a filtered or shallow clone without eval
+  paths) so ordinary recon cannot stumble into them or see their deletion in
+  `git status`. If the harness cannot strip them, the run is valid only if
+  the transcript shows the agent never read an `eval/` folder or its content.
 - A driver (human or LLM) plays the user, answering strictly from
   [persona.md](persona.md). The driver never volunteers information that was
   not asked for.
@@ -55,5 +58,5 @@ scaffolds `skills/changelog/` per the house anatomy (references first,
 SKILL.md last), shows a passing validation
 checklist, then runs the dry runs on approved prompts — revising the files
 after each feedback item — and finalizes with the file tree. The scaffolded
-skill contains nothing the persona did not say or the agent did not record as
-a delegated decision.
+skill contains nothing outside the provenance sources checklist C5 allows —
+graded by rubric A9.

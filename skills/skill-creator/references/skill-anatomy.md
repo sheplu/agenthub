@@ -85,8 +85,8 @@ guards against a summary too thin to route by.
 ## Summary vs reference split
 
 Every number, threshold, enumeration, template, and procedure lives in exactly
-one reference file — the validation checklist, as this spec's enforcement
-form, is the one sanctioned restatement. SKILL.md carries only bold-keyword
+one reference file — the validation checklist, as the enforcement form of the
+rules it checks, is the one sanctioned restatement. SKILL.md carries only bold-keyword
 pointers. A detail stated in both places is a defect: the copies will drift,
 and the summary copy will win by being loaded first.
 
@@ -117,9 +117,10 @@ carry an `eval/` folder with three files: `scenario.md` (setup, the opening
 message verbatim, round budgets, expected behaviour), `persona.md` (the
 driver's hidden knowledge: facts revealed only when asked, first vs probed
 answers, scripted feedback), and `rubric.md` (pass/fail must/should checks
-over the transcript and the produced artifact). The scenario must instruct
-stripping `eval/` from the installed skill copy and the eval checkout — an
-agent that can read the persona invalidates the run. Deterministic,
+over the transcript and the produced artifact). The scenario must make the
+answer key unreachable: strip `eval/` from the installed skill copy and the
+eval checkout, and treat answers recovered from git history as equally
+invalidating — an agent that can read the persona invalidates the run. Deterministic,
 output-contract skills use the `evals/suites/` benchmark framework instead
 (see `evals/README.md`).
 
