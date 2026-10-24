@@ -1,0 +1,55 @@
+# Skill Creator — Validation checklist
+
+The pass/fail gate for a scaffolded or updated skill. Run it before
+presenting a draft, and again when presenting, after the dry runs have
+finished; show the user the outcome of that final pass. The structure and
+content checks enforce [skill-anatomy.md](skill-anatomy.md); the process
+checks enforce [authoring-workflow.md](authoring-workflow.md) and
+[dry-run-protocol.md](dry-run-protocol.md) — consult those files for the
+reasoning behind a check. On a foreign repo where anatomy's portability detection
+found local conventions, substitute those for the house-specific rows and say
+which rows were substituted.
+
+## Structure checks
+
+| # | Check |
+| --- | --- |
+| S1 | Directory name is kebab-case and equals the frontmatter `name`. |
+| S2 | Frontmatter has exactly two fields: `name` and `description` — nothing else — and parses as YAML (a leading quoted phrase or a `: ` inside the unquoted description scalar breaks it). |
+| S3 | Description follows `<what it does> — use when <triggers>` (the `use when` clause may open its own sentence) and names concrete trigger situations; literal user phrases are quoted where the description uses them. |
+| S4 | SKILL.md has the sections in order: title + intro, `## Core rules at a glance`, `## References`, and — required for multi-mode skills — `## How to use`. |
+| S5 | The References section opens with the verbatim line `Read these on demand — do not guess details from the summary above:`. |
+| S6 | The references table has exactly the two columns `File` and `Read when`, with relative markdown links. |
+| S7 | Table/file bijection: every reference file appears in the table, every table row links to an existing file, every link resolves. |
+| S8 | `references/` holds 2 to 4 top-level topic files, kebab-case names; variant subdirectories (one file per variant) sit outside the cap. |
+| S9 | SKILL.md is 52–88 lines by `wc -l`, frontmatter included. |
+| S10 | When present (required for multi-mode skills), `## How to use` has one bullet per mode, each naming the reference(s) to read first. |
+| S11 | The skill's top level holds only `SKILL.md`, `references/`, and optionally `eval/` — no README, scripts, assets, or stray files. |
+| S12 | When `eval/` exists: it holds exactly `scenario.md`, `persona.md`, and `rubric.md`, and the scenario makes the answer key unreachable — stripped from installed copies and the eval checkout, with answers recovered from git history invalidating the run. |
+
+## Content checks
+
+| # | Check |
+| --- | --- |
+| C1 | No number, enumeration, template, or procedure that lives in a reference is restated in SKILL.md or duplicated across reference files (one home per detail — this checklist's rows are the one sanctioned restatement of the rules they enforce; a file shared by modes stays one file) — the summary only points. |
+| C2 | Every reference file starts with `# <Skill> — <Topic>` and a pointer paragraph naming sibling references where relevant. |
+| C3 | Enumerations are tables; procedures are numbered steps; checklists are pass/fail tables or checkbox lists. |
+| C4 | The intro paragraph states the skill's relation to the sibling skills its scope borders (nothing is required when none borders). |
+| C5 | Every constraint in the files traces to a user-confirmed intake answer, a recon finding, a rule borrowed from user-confirmed inspiration, a fact looked up per the workflow's facts-vs-decisions rule, or a decision explicitly recorded as delegated — no invented rules. |
+| C6 | Update mode only: the diff is limited to the requested change — no rewrites of untouched sections. |
+
+## Process checks
+
+| # | Check |
+| --- | --- |
+| P1 | Create mode only: recon (conversation + repo) ran before the first intake question, and its findings — or an explicitly empty sheet — were presented as pre-filled answers. |
+| P2 | Create mode only: inspiration candidates were proposed and user-confirmed before being read in depth as inspiration — recon and portability-detection reads are exempt. |
+| P3 | At presentation only: dry runs were executed per the protocol — when the mode required them (update mode may skip them for pure wording fixes, saying so explicitly) — and every feedback item is visible in the final files. |
+
+## On failure
+
+Fix the failing check, then re-run the **entire** checklist — a fix can break
+a convention elsewhere (line budget, bijection). Never present a skill with a
+failing check, and never report "mostly passing". In update mode, failures
+that pre-date the requested change follow the workflow's update rules —
+reported, never fixed unasked, not blocking.
