@@ -72,6 +72,5 @@ Read these on demand — do not guess details from the summary above:
   `validation-checklist.md`; dry-run per `dry-run-protocol.md`; finalize.
 - **Updating a skill**: read the update section and Shared rules of
   `authoring-workflow.md`, plus `skill-anatomy.md`; read the existing skill
-  fully; apply only the
-  requested change; re-validate the whole skill; dry-run when behaviour
-  changed.
+  fully; apply only the requested change; re-validate the whole skill;
+  dry-run when behaviour changed.
