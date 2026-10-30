@@ -1,0 +1,29 @@
+[
+  {
+    "repository": {"name": "platform", "nameWithOwner": "acme/platform"},
+    "number": 142,
+    "title": "Add OAuth 2.1 token refresh handling",
+    "url": "https://github.com/acme/platform/pull/142",
+    "closedAt": "2026-10-07T17:00:00Z",
+    "body": "Implements automatic token refresh with exponential backoff.\n\nCloses #87",
+    "labels": [{"name": "feature"}, {"name": "auth"}]
+  },
+  {
+    "repository": {"name": "platform", "nameWithOwner": "acme/platform"},
+    "number": 145,
+    "title": "Fix null response handling in payment gateway",
+    "url": "https://github.com/acme/platform/pull/145",
+    "closedAt": "2026-10-08T18:20:00Z",
+    "body": "Added null checks for payment gateway responses.\n\nFixes #89",
+    "labels": [{"name": "bug"}, {"name": "payments"}]
+  },
+  {
+    "repository": {"name": "platform", "nameWithOwner": "acme/platform"},
+    "number": 148,
+    "title": "Upgrade Express to 4.19.2",
+    "url": "https://github.com/acme/platform/pull/148",
+    "closedAt": "2026-10-09T15:30:00Z",
+    "body": "Addresses CVE-2026-1234.\n\nFixes #92",
+    "labels": [{"name": "dependencies"}, {"name": "security"}]
+  }
+]

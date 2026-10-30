@@ -1,0 +1,11 @@
+{
+  "name": "Alex Chen",
+  "level": "senior",
+  "team": "Platform Engineering",
+  "email": "alex.chen@example.com",
+  "github_username": "alexchen",
+  "preferences": {
+    "default_window_days": 7,
+    "categories": null
+  }
+}
